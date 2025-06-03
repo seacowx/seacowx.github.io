@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hainiu Xu | KclNLP</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/npm/@fontsource/maple-mono@5.1.0/index.css');
+        
+        :root {
+            /* Dark theme (default) */
+            --bg-color: #1a1b26;
+            --terminal-bg: #1a1b26;
+            --text-color: #c0caf5;
+            --border-color: #414868;
+            --prompt-color: #7dcfff;
+            --command-color: #bb9af7;
+            --output-color: #c0caf5;
+            --welcome-bg: rgba(125, 207, 255, 0.05);
+            --link-color: #bb9af7;
+            --link-hover: #c0caf5;
+            --input-bg: rgba(65, 72, 104, 0.3);
+            --input-border: #565f89;
+            --cursor-color: #f7768e;
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --bg-color: #ffffff;
+            --terminal-bg: #fafafa;
+            --text-color: #24283b;
+            --border-color: #e1e2e7;
+            --prompt-color: #0f4c75;
+            --command-color: #8b5a2b;
+            --output-color: #24283b;
+            --welcome-bg: rgba(15, 76, 117, 0.05);
+            --link-color: #8b5a2b;
+            --link-hover: #24283b;
+            --input-bg: rgba(225, 226, 231, 0.5);
+            --input-border: #c0c0c0;
+            --cursor-color: #d63031;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            background-color: #1a1b26;
+            color: #c0caf5;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        .terminal-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .terminal-header {
+            background: #414868;
+            border-radius: 8px 8px 0 0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .window-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27ca3f; }
+        
+        .terminal-title {
+            color: #c0caf5;
+            font-size: 14px;
+            margin-left: 16px;
+        }
+        
+        .terminal-body {
+            background: #1a1b26;
+            border-radius: 0 0 8px 8px;
+            padding: 20px;
+            border: 1px solid #414868;
+            border-top: none;
+            min-height: 500px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .prompt-line {
+            margin-bottom: 24px;
+            margin-top: 40px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .prompt-line:first-of-type {
+            margin-top: 0;
+        }
+        
+        .prompt-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .starship-prompt {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .prompt-symbol {
+            color: #7aa2f7;
+            margin-right: 8px;
+            font-weight: 500;
+        }
+        
+        .directory {
+            color: #9ece6a;
+            margin-right: 8px;
+        }
+        
+        .git-branch {
+            color: #f7768e;
+            margin-right: 8px;
+        }
+        
+        .command {
+            color: #bb9af7;
+            font-weight: 500;
+        }
+        
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 20px;
+            background-color: #c0caf5;
+            animation: blink 1s infinite;
+            margin-left: 1px;
+            vertical-align: text-bottom;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: #c0caf5;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .output {
+            margin-left: 20px;
+            margin-bottom: 32px;
+            color: #c0caf5;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .output.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .welcome-text {
+            color: #7dcfff;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+        
+        .welcome-text a {
+            color: #bb9af7;
+            text-decoration: underline;
+            text-decoration-color: #565f89;
+            transition: all 0.2s ease;
+        }
+        
+        .welcome-text a:hover {
+            color: #c0caf5;
+            text-decoration-color: #bb9af7;
+            background-color: rgba(187, 154, 247, 0.1);
+            padding: 1px 2px;
+            border-radius: 3px;
+        }
+        
+        .welcome-text a:visited {
+            color: #f7768e;
+        }
+        
+        .welcome-name {
+            display: inline-block;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff79c6, #bd93f9, #50fa7b, #8be9fd);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: gradientShift 4s ease-in-out infinite, nameGlow 2s ease-in-out infinite alternate;
+            padding: 2px 8px;
+            border-radius: 6px;
+            position: relative;
+            text-shadow: none;
+        }
+        
+        .welcome-name::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 121, 198, 0.15), rgba(189, 147, 249, 0.15), rgba(80, 250, 123, 0.15), rgba(139, 233, 253, 0.15));
+            border-radius: 6px;
+            z-index: -1;
+            animation: backgroundPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes nameGlow {
+            0% { filter: brightness(1) saturate(1); }
+            100% { filter: brightness(1.2) saturate(1.3); }
+        }
+        
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .highlighted-name {
+            font-weight: bold;
+            font-size: 1.05em;
+            background: linear-gradient(135deg, #ff9500, #ff6b35, #f72585, #7209b7, #560bad);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 3s ease-in-out infinite;
+            padding: 3px 8px;
+            border-radius: 6px;
+            position: relative;
+            display: inline-block;
+            text-shadow: none;
+        }
+        
+        .highlighted-name::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 149, 0, 0.1), 
+                rgba(255, 107, 53, 0.1), 
+                rgba(247, 37, 133, 0.1), 
+                rgba(114, 9, 183, 0.1), 
+                rgba(86, 11, 173, 0.1)
+            );
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease-in-out infinite;
+            border-radius: 6px;
+            z-index: -1;
+            filter: blur(2px);
+        }
+        
+        .highlighted-name::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 149, 0, 0.05), 
+                rgba(255, 107, 53, 0.05), 
+                rgba(247, 37, 133, 0.05), 
+                rgba(114, 9, 183, 0.05), 
+                rgba(86, 11, 173, 0.05)
+            );
+            border: 1px solid rgba(247, 37, 133, 0.3);
+            border-radius: 6px;
+            z-index: -1;
+            box-shadow: 
+                0 0 10px rgba(247, 37, 133, 0.2),
+                0 0 20px rgba(114, 9, 183, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        /* Fallback for browsers that don't support background-clip: text */
+        @supports not (-webkit-background-clip: text) {
+            .highlighted-name {
+                color: #ff6b35;
+                background: linear-gradient(135deg, 
+                    rgba(255, 107, 53, 0.2), 
+                    rgba(247, 37, 133, 0.2)
+                );
+                -webkit-text-fill-color: unset;
+            }
+        }
+        
+        .item {
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 2px solid;
+        }
+        
+        .item.experience { 
+            border-left-color: #7aa2f7;
+            margin-bottom: 16px;
+        }
+        
+        .item.education { 
+            border-left-color: #bb9af7;
+            margin-bottom: 16px;
+        }
+        
+        .item.publication { 
+            border-left-color: #9ece6a;
+            margin-bottom: 24px;
+        }
+        
+        .item-title {
+            color: #9ece6a;
+            font-weight: 500;
+        }
+        
+        .item-subtitle {
+            color: #e0af68;
+        }
+        
+        .item-meta {
+            color: #565f89;
+            font-size: 0.9em;
+        }
+        
+        .publication .item-title {
+            color: #7dcfff;
+            margin-bottom: 4px;
+        }
+        
+        .publication .item-title a {
+            color: #7dcfff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .publication .item-title a:hover {
+            color: #c0caf5;
+            border-bottom-color: #7dcfff;
+        }
+        
+        .publication-authors {
+            color: #9ece6a;
+            font-size: 0.9em;
+            margin-bottom: 2px;
+        }
+        
+        .publication-venue {
+            color: #e0af68;
+            font-size: 0.9em;
+        }
+        
+        .publication-links {
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            font-size: 0.85em;
+        }
+        
+        .publication-link {
+            color: #bb9af7;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #565f89;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: linear-gradient(135deg, rgba(187, 154, 247, 0.05), rgba(187, 154, 247, 0.02));
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .publication-link:hover {
+            color: #c0caf5;
+            border-color: #bb9af7;
+            background: linear-gradient(135deg, rgba(187, 154, 247, 0.15), rgba(187, 154, 247, 0.08));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(187, 154, 247, 0.3);
+        }
+        
+        .publication-link.paper-link {
+            border-color: #7dcfff;
+            color: #7dcfff;
+            background: linear-gradient(135deg, rgba(125, 207, 255, 0.08), rgba(125, 207, 255, 0.03));
+        }
+        
+        .publication-link.paper-link:hover {
+            border-color: #89ddff;
+            color: #89ddff;
+            background: linear-gradient(135deg, rgba(125, 207, 255, 0.2), rgba(125, 207, 255, 0.1));
+            box-shadow: 0 4px 12px rgba(125, 207, 255, 0.3);
+        }
+        
+        .publication-link.bib-link {
+            border-color: #9ece6a;
+            color: #9ece6a;
+            background: linear-gradient(135deg, rgba(158, 206, 106, 0.08), rgba(158, 206, 106, 0.03));
+        }
+        
+        .publication-link.bib-link:hover {
+            border-color: #a9e34b;
+            color: #a9e34b;
+            background: linear-gradient(135deg, rgba(158, 206, 106, 0.2), rgba(158, 206, 106, 0.1));
+            box-shadow: 0 4px 12px rgba(158, 206, 106, 0.3);
+        }
+        
+        .link-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .paper-icon {
+            background: currentColor;
+            border-radius: 2px;
+            position: relative;
+            opacity: 0.9;
+        }
+        
+        .paper-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 0.6;
+            z-index: -1;
+        }
+        
+        .paper-icon::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: #1a1b26;
+            box-shadow: 0 3px 0 #1a1b26, 0 6px 0 #1a1b26;
+        }
+        
+        .bib-icon {
+            background: currentColor;
+            border-radius: 2px;
+            position: relative;
+            opacity: 0.9;
+        }
+        
+        .bib-icon::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            right: 15%;
+            bottom: 15%;
+            background: #1a1b26;
+            border-radius: 1px;
+        }
+        
+        .bib-icon::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 25%;
+            right: 25%;
+            height: 1px;
+            background: currentColor;
+            box-shadow: 
+                0 2px 0 currentColor,
+                0 4px 0 currentColor,
+                0 7px 0 currentColor,
+                0 9px 0 currentColor;
+        }
+        
+        .scholar-icon {
+            background: currentColor;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .scholar-icon::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            right: 20%;
+            bottom: 20%;
+            background: #1a1b26;
+            border-radius: 50%;
+        }
+        
+        .scholar-icon::after {
+            content: '';
+            position: absolute;
+            top: 35%;
+            left: 35%;
+            right: 35%;
+            bottom: 35%;
+            background: currentColor;
+            border-radius: 50%;
+        }
+        
+        .bib-citation {
+            position: relative;
+        }
+        
+        .bib-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #1a1b26;
+            border: 1px solid #414868;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #c0caf5;
+            white-space: pre-line;
+            z-index: 1000;
+            min-width: 400px;
+            max-width: 500px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-bottom: 8px;
+            pointer-events: none;
+        }
+        
+        .bib-tooltip.position-top {
+            bottom: 100%;
+            top: auto;
+            margin-bottom: 8px;
+            margin-top: 0;
+        }
+        
+        .bib-tooltip.position-bottom {
+            bottom: auto;
+            top: 100%;
+            margin-bottom: 0;
+            margin-top: 8px;
+        }
+        
+        .bib-tooltip.position-left {
+            left: 0;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip.position-right {
+            left: auto;
+            right: 0;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+        }
+        
+        .bib-tooltip.position-top::after {
+            top: 100%;
+            border-top-color: #414868;
+            border-bottom: none;
+        }
+        
+        .bib-tooltip.position-bottom::after {
+            bottom: 100%;
+            border-bottom-color: #414868;
+            border-top: none;
+        }
+        
+        .bib-tooltip.position-left::after {
+            left: 20px;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip.position-right::after {
+            left: auto;
+            right: 20px;
+            transform: translateX(0);
+        }
+        
+        .bib-citation:hover .bib-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .education .item-title {
+            color: #7dcfff;
+        }
+        
+        .education .item-subtitle {
+            color: #f7768e;
+        }
+        
+        .loading {
+            color: #565f89;
+            font-style: italic;
+        }
+        
+        /* Interactive terminal styles */
+        .interactive-prompt {
+            margin-bottom: 8px;
+            margin-top: 20px;
+        }
+        
+        .command-input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--command-color);
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        .file-list {
+            color: #7dcfff;
+            margin-left: 20px;
+        }
+        
+        .file-item {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 2px 4px;
+            color: #9ece6a;
+        }
+        
+        .error-message {
+            color: #f7768e;
+            margin-left: 20px;
+        }
+        
+        .help-message {
+            color: #e0af68;
+            margin-left: 20px;
+            font-size: 0.9em;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: #565f89;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            z-index: 1000;
+        }
+        
+        .admin-toggle:hover {
+            opacity: 0.7;
+        }
+        
+        .admin-panel {
+            position: fixed;
+            top: 50px;
+            right: -420px;
+            width: 400px;
+            max-height: 80vh;
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 12px;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .admin-panel.open {
+            right: 20px;
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #414868;
+        }
+        
+        .admin-title {
+            color: #bb9af7;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .admin-close {
+            background: none;
+            border: none;
+            color: #565f89;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        }
+        
+        .admin-close:hover {
+            color: #c0caf5;
+        }
+        
+        .stats-section {
+            margin-bottom: 24px;
+        }
+        
+        .stats-title {
+            color: #7aa2f7;
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(65, 72, 104, 0.3);
+            font-size: 12px;
+        }
+        
+        .stat-label {
+            color: #c0caf5;
+        }
+        
+        .stat-value {
+            color: #9ece6a;
+            font-weight: 600;
+        }
+        
+        .admin-auth {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .auth-input {
+            background: rgba(65, 72, 104, 0.3);
+            border: 1px solid #414868;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #c0caf5;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 12px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+        
+        .auth-input:focus {
+            outline: none;
+            border-color: #bb9af7;
+        }
+        
+        .auth-button {
+            background: #bb9af7;
+            color: #1a1b26;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .auth-button:hover {
+            background: #c0caf5;
+        }
+        
+        .visitor-list {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+        
+        .visitor-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(65, 72, 104, 0.2);
+            color: #c0caf5;
+        }
+        
+        .visitor-time {
+            color: #565f89;
+            font-size: 10px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 0;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        }
+
+        .admin-button {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Toggle Button -->
+    <button class="admin-toggle" onclick="window.statsTracker.toggleAdminPanel()">⚙</button>
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div id="adminAuth" class="admin-auth">
+            <h3 style="color: #bb9af7; margin-bottom: 20px;">Admin Access</h3>
+            <input type="password" class="auth-input" id="adminPassword" placeholder="Enter admin password">
+            <button class="auth-button" onclick="window.statsTracker.authenticate()">Login</button>
+        </div>
+        
+        <div id="adminContent" style="display: none;">
+            <div class="admin-header">
+                <span class="admin-title">Website Statistics</span>
+                <button class="admin-close" onclick="window.statsTracker.closeAdminPanel()">×</button>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stats-title">Overview</div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Visits:</span>
+                    <span class="stat-value" id="totalVisits">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Unique Visitors:</span>
+                    <span class="stat-value" id="uniqueVisitors">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Today's Visits:</span>
+                    <span class="stat-value" id="todayVisits">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Average Session:</span>
+                    <span class="stat-value" id="avgSession">0s</span>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stats-title">Commands Used</div>
+                <div id="commandStats"></div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stats-title">Recent Visitors</div>
+                <div class="visitor-list" id="visitorList"></div>
+            </div>
+            
+            <div class="stats-section">
+                <button class="auth-button" onclick="window.statsTracker.exportStats()" style="width: 100%; margin-bottom: 8px;">Export Data</button>
+                <button class="auth-button" onclick="window.statsTracker.clearStats()" style="width: 100%; background: #f7768e;">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="window-controls">
+                <div class="control close"></div>
+                <div class="control minimize"></div>
+                <div class="control maximize"></div>
+            </div>
+            <div class="terminal-title">Last Updated: 2025-06-03</div>
+        </div>
+        
+        <div class="terminal-body" id="terminal"></div>
+    </div>
+
+    <script>
+        // Improved TOML parser with proper multi-line string support
+        class SimpleTOMLParser {
+            static parse(tomlString) {
+                const lines = tomlString.split('\n');
+                const result = {};
+                let currentArray = null;
+                let currentObject = null;
+                let i = 0;
+                
+                while (i < lines.length) {
+                    const line = lines[i].trim();
+                    
+                    // Skip empty lines and comments
+                    if (!line || line.startsWith('#')) {
+                        i++;
+                        continue;
+                    }
+                    
+                    // Array header like [[experience]]
+                    if (line.startsWith('[[') && line.endsWith(']]')) {
+                        const arrayName = line.slice(2, -2);
+                        if (!result[arrayName]) result[arrayName] = [];
+                        currentArray = arrayName;
+                        currentObject = {};
+                        result[arrayName].push(currentObject);
+                        i++;
+                    }
+                    // Table header like [profile]
+                    else if (line.startsWith('[') && line.endsWith(']')) {
+                        const tableName = line.slice(1, -1);
+                        result[tableName] = {};
+                        currentArray = null;
+                        currentObject = result[tableName];
+                        i++;
+                    }
+                    // Key-value pair
+                    else if (line.includes('=')) {
+                        const equalIndex = line.indexOf('=');
+                        const key = line.substring(0, equalIndex).trim();
+                        let value = line.substring(equalIndex + 1).trim();
+                        
+                        // Handle multi-line string with """
+                        if (value.startsWith('"""')) {
+                            value = value.slice(3); // Remove opening """
+                            
+                            // If the opening """ is on its own line or doesn't close on same line
+                            if (value === '' || !value.endsWith('"""')) {
+                                const multilineContent = [];
+                                if (value && !value.endsWith('"""')) {
+                                    multilineContent.push(value);
+                                }
+                                
+                                i++; // Move to next line
+                                
+                                // Collect lines until we find the closing """
+                                while (i < lines.length) {
+                                    const currentLine = lines[i];
+                                    if (currentLine.trim() === '"""' || currentLine.trim().endsWith('"""')) {
+                                        // Found closing """
+                                        if (currentLine.trim() !== '"""') {
+                                            // There's content before the closing """
+                                            multilineContent.push(currentLine.replace(/"""$/, '').trimEnd());
+                                        }
+                                        break;
+                                    } else {
+                                        // Regular line in multi-line string
+                                        multilineContent.push(currentLine);
+                                    }
+                                    i++;
+                                }
+                                
+                                value = multilineContent.join('\n');
+                            } else {
+                                // Single line with """ at both ends
+                                value = value.slice(0, -3);
+                            }
+                        }
+                        // Handle regular quoted strings
+                        else if ((value.startsWith('"') && value.endsWith('"')) ||
+                                (value.startsWith("'") && value.endsWith("'"))) {
+                            value = value.slice(1, -1);
+                        }
+                        
+                        if (currentObject) {
+                            currentObject[key] = value;
+                        }
+                        i++;
+                    } else {
+                        i++;
+                    }
+                }
+                
+                return result;
+            }
+        }
+
+        // Helper function to process welcome message with name highlighting
+        function processWelcomeMessage(message) {
+            // Replace "Hainiu Xu" with highlighted version
+            return message.replace(
+                /Hainiu Xu/g, 
+                '<span class="welcome-name">Hainiu Xu (许海牛)</span>'
+            );
+        }
+
+        // Tooltip positioning function
+        function positionTooltip(tooltipElement, triggerElement) {
+            const tooltip = tooltipElement;
+            const trigger = triggerElement;
+            const rect = trigger.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // Reset classes
+            tooltip.className = 'bib-tooltip';
+            
+            // Check vertical positioning
+            const spaceAbove = rect.top;
+            const spaceBelow = viewportHeight - rect.bottom;
+            const tooltipHeight = tooltipRect.height || 200; // estimated height
+            
+            if (spaceAbove >= tooltipHeight + 20) {
+                // Enough space above
+                tooltip.classList.add('position-top');
+            } else if (spaceBelow >= tooltipHeight + 20) {
+                // Not enough space above, use below
+                tooltip.classList.add('position-bottom');
+            } else {
+                // Use the side with more space
+                tooltip.classList.add(spaceAbove > spaceBelow ? 'position-top' : 'position-bottom');
+            }
+            
+            // Check horizontal positioning
+            const tooltipWidth = tooltipRect.width || 450; // estimated width
+            const centerPosition = rect.left + rect.width / 2;
+            const tooltipHalfWidth = tooltipWidth / 2;
+            
+            if (centerPosition - tooltipHalfWidth < 10) {
+                // Would overflow on the left
+                tooltip.classList.add('position-left');
+            } else if (centerPosition + tooltipHalfWidth > viewportWidth - 10) {
+                // Would overflow on the right
+                tooltip.classList.add('position-right');
+            }
+            // Otherwise keep center positioning (default)
+        }
+
+        // Command handler (fixed async handling)
+        class CommandHandler {
+            constructor(data) {
+                this.data = data;
+                this.commands = {
+                    'ls': this.listFiles.bind(this),
+                    'cat': this.catFile.bind(this),
+                    'head': this.headFile.bind(this),
+                    'echo': this.echoVariable.bind(this),
+                    'help': this.showHelp.bind(this),
+                    'clear': this.clearTerminal.bind(this),
+                    'pwd': this.printWorkingDirectory.bind(this)
+                };
+            }
+            
+            executeCommand(commandLine) {
+                // Track command usage
+                const baseCommand = commandLine.split(' ')[0];
+                if (window.statsTracker) {
+                    window.statsTracker.trackCommand(baseCommand);
+                }
+                
+                const parts = commandLine.trim().split(/\s+/);
+                const command = parts[0].toLowerCase();
+                const args = parts.slice(1);
+                
+                if (this.commands[command]) {
+                    return this.commands[command](args);
+                } else {
+                    return `Command not found: ${command}. Type 'help' for available commands.`;
+                }
+            }
+            
+            listFiles(args) {
+                return `<div class="file-list">
+                    <div class="file-item">welcome_message.txt</div>
+                    <div class="file-item">publications.txt</div>
+                </div>`;
+            }
+            
+            catFile(args) {
+                if (args.length === 0) {
+                    return `<div class="error-message">cat: missing file operand</div>`;
+                }
+                
+                const filename = args[0];
+                
+                if (filename === 'welcome_message.txt') {
+                    const message = this.data.profile?.profile?.message || 
+                                  this.data.profile?.message || 
+                                  "Hi there! I'm Hainiu Xu (许海牛) 👋\n\nWelcome to my terminal homepage!";
+                    const processedMessage = processWelcomeMessage(message);
+                    return `<div class="welcome-text">${processedMessage}</div>`;
+                } else if (filename === 'publications.txt') {
+                    return this.renderAllPublications();
+                } else {
+                    return `<div class="error-message">cat: ${filename}: No such file or directory</div>`;
+                }
+            }
+            
+            headFile(args) {
+                if (args.length === 0) {
+                    return `<div class="error-message">head: missing file operand</div>`;
+                }
+                
+                let lines = 10; // default
+                let filename = args[0];
+                
+                // Check for -n flag
+                if (args[0] === '-n' && args.length >= 3) {
+                    lines = parseInt(args[1]) || 10;
+                    filename = args[2];
+                }
+                
+                if (filename === 'publications.txt') {
+                    const pubs = this.data.publications?.publication || [];
+                    const limitedPubs = pubs.slice(0, lines);
+                    return this.renderPublications(limitedPubs) + this.getGoogleScholarLink();
+                } else {
+                    return `<div class="error-message">head: ${filename}: No such file or directory</div>`;
+                }
+            }
+            
+            echoVariable(args) {
+                if (args.length === 0) {
+                    return '';
+                }
+                
+                const variable = args[0];
+                
+                if (variable === '$EXPERIENCES') {
+                    return this.renderExperiences();
+                } else if (variable === '$EDUCATION') {
+                    return this.renderEducation();
+                } else {
+                    return `<div class="output">${args.join(' ')}</div>`;
+                }
+            }
+            
+            showHelp(args) {
+                return `<div class="help-message">Available commands:
+ls                    - list files
+cat [file]           - display file contents
+head [-n num] [file] - display first lines of file
+echo $VARIABLE       - display environment variable
+pwd                  - print working directory
+clear                - clear terminal
+help                 - show this help message
+
+Available files: welcome_message.txt, publications.txt
+Available variables: $EXPERIENCES, $EDUCATION</div>`;
+            }
+            
+            clearTerminal(args) {
+                return 'CLEAR_TERMINAL';
+            }
+            
+            printWorkingDirectory(args) {
+                return `<div class="output">/home/user/personal</div>`;
+            }
+            
+            renderAllPublications() {
+                const pubs = this.data.publications?.publication || [];
+                return this.renderPublications(pubs) + this.getGoogleScholarLink();
+            }
+            
+            getGoogleScholarLink() {
+                const scholarUrl = this.data.profile?.profile?.google_scholar || 
+                                 this.data.profile?.google_scholar || 
+                                 "https://scholar.google.com/citations?user=your_user_id";
+                
+                return `
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #414868;">
+                        <div style="color: #e0af68; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                            <span style="font-size: 1.2em;">📚</span>
+                            For a complete list of publications, visit my:
+                        </div>
+                        <a href="${scholarUrl}" target="_blank" class="publication-link" style="color: #f7768e; border-color: #f7768e; background: linear-gradient(135deg, rgba(247, 118, 142, 0.08), rgba(247, 118, 142, 0.03)); font-weight: 600;">
+                            <span class="link-icon scholar-icon"></span>
+                            Google Scholar Profile
+                        </a>
+                    </div>
+                `;
+            }
+            
+            renderPublications(publications) {
+                return publications.map((pub, index) => {
+                    const titleWithLink = pub.paper_url ? 
+                        `<a href="${pub.paper_url}" target="_blank">${pub.title}</a>` : 
+                        pub.title;
+                    
+                    const bibTooltip = pub.bib ? 
+                        `<div class="bib-tooltip" id="bib-tooltip-cmd-${index}">${pub.bib}</div>` : '';
+                    
+                    return `
+                        <div class="item publication">
+                            <div class="item-title">${titleWithLink}</div>
+                            ${pub.authors ? `<div class="publication-authors">${pub.authors}</div>` : ''}
+                            <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
+                            <div class="publication-links">
+                                ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
+                                    <span class="link-icon paper-icon"></span>
+                                    Paper
+                                </a>` : ''}
+                                ${pub.bib ? `<span class="publication-link bib-citation bib-link" id="bib-trigger-cmd-${index}">
+                                    <span class="link-icon bib-icon"></span>
+                                    BibTeX${bibTooltip}
+                                </span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            renderExperiences() {
+                const experiences = this.data.experiences?.experience || [];
+                return experiences.map(exp => `
+                    <div class="item experience">
+                        <div class="item-title">${exp.title}</div>
+                        <div class="item-subtitle">@ ${exp.company}</div>
+                        <div class="item-meta">${exp.duration}</div>
+                    </div>
+                `).join('');
+            }
+            
+            renderEducation() {
+                const education = this.data.education?.education || [];
+                return education.map(edu => `
+                    <div class="item education">
+                        <div class="item-title">${edu.degree}</div>
+                        <div class="item-subtitle">@ ${edu.school}</div>
+                        <div class="item-meta">${edu.year}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Terminal sections configuration - updated welcome section
+        const DEMO_SECTIONS = [
+            { 
+                command: 'cat welcome_message.txt', 
+                dataKey: 'profile',
+                render: (data) => {
+                    const message = data?.profile?.message || data?.message || "Hi there! I'm Hainiu Xu (许海牛) 👋\n\nWelcome to my terminal homepage!";
+                    const processedMessage = processWelcomeMessage(message);
+                    return `<div class="welcome-text">${processedMessage}</div>`;
+                }
+            },
+            { 
+                command: 'echo $EXPERIENCES', 
+                dataKey: 'experiences',
+                render: (data) => data.experience?.map(exp => `
+                    <div class="item experience">
+                        <div class="item-title">${exp.title}</div>
+                        <div class="item-subtitle">@ ${exp.company}</div>
+                        <div class="item-meta">${exp.duration}</div>
+                    </div>
+                `).join('') || '<div class="loading">No experiences available</div>'
+            },
+            { 
+                command: 'echo $EDUCATION', 
+                dataKey: 'education',
+                render: (data) => data.education?.map(edu => `
+                    <div class="item education">
+                        <div class="item-title">${edu.degree}</div>
+                        <div class="item-subtitle">@ ${edu.school}</div>
+                        <div class="item-meta">${edu.year}</div>
+                    </div>
+                `).join('') || '<div class="loading">No education available</div>'
+            },
+            { 
+                command: 'head -n 3 publications.txt', 
+                dataKey: 'publications',
+                render: (data, terminalInstance) => {
+                    const pubs = data.publication || [];
+                    const limitedPubs = pubs.slice(0, 3);
+                    
+                    const publications = limitedPubs.map((pub, index) => {
+                        const titleWithLink = pub.paper_url ? 
+                            `<a href="${pub.paper_url}" target="_blank">${pub.title}</a>` : 
+                            pub.title;
+                        
+                        const bibTooltip = pub.bib ? 
+                            `<div class="bib-tooltip" id="bib-tooltip-${index}">${pub.bib}</div>` : '';
+                        
+                        return `
+                            <div class="item publication">
+                                <div class="item-title">${titleWithLink}</div>
+                                ${pub.authors ? `<div class="publication-authors">${pub.authors}</div>` : ''}
+                                <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
+                                <div class="publication-links">
+                                    ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
+                                        <span class="link-icon paper-icon"></span>
+                                        Paper
+                                    </a>` : ''}
+                                    ${pub.bib ? `<span class="publication-link bib-citation bib-link" id="bib-trigger-${index}">
+                                        <span class="link-icon bib-icon"></span>
+                                        BibTeX${bibTooltip}
+                                    </span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Get Google Scholar link from profile data
+                    const profileData = terminalInstance?.data?.profile || {};
+                    const scholarUrl = profileData?.profile?.google_scholar || 
+                                     profileData?.google_scholar || 
+                                     "https://scholar.google.com/citations?user=your_user_id";
+                    
+                    const googleScholarLink = `
+                        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #414868;">
+                            <div style="color: #e0af68; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                                <span style="font-size: 1.2em;">📚</span>
+                                For a complete list of publications, visit my:
+                            </div>
+                            <a href="${scholarUrl}" target="_blank" class="publication-link" style="color: #f7768e; border-color: #f7768e; background: linear-gradient(135deg, rgba(247, 118, 142, 0.08), rgba(247, 118, 142, 0.03)); font-weight: 600;">
+                                <span class="link-icon scholar-icon"></span>
+                                Google Scholar Profile
+                            </a>
+                        </div>
+                    `;
+                    
+                    return (publications || '<div class="loading">No publications available</div>') + googleScholarLink;
+                }
+            }
+        ];
+
+        class TerminalSimulator {
+            constructor() {
+                this.data = {};
+                this.currentSection = 0;
+                this.isTyping = false;
+                this.commandHandler = null;
+                this.isInteractive = false;
+                this.commandHistory = [];
+                this.historyIndex = -1;
+                this.init();
+            }
+            
+            async init() {
+                await this.loadData();
+                this.commandHandler = new CommandHandler(this.data);
+                console.log('All loaded data:', this.data);
+                this.renderTerminal();
+                this.setupTooltipListeners();
+                this.startAnimation();
+            }
+            
+            setupTooltipListeners() {
+                // Add event listeners for tooltip positioning
+                document.addEventListener('mouseenter', (e) => {
+                    if (e.target.classList.contains('bib-citation')) {
+                        const trigger = e.target;
+                        const tooltip = trigger.querySelector('.bib-tooltip');
+                        if (tooltip) {
+                            // Small delay to ensure tooltip is rendered
+                            setTimeout(() => {
+                                positionTooltip(tooltip, trigger);
+                            }, 10);
+                        }
+                    }
+                }, true);
+                
+                // Handle window resize
+                window.addEventListener('resize', () => {
+                    document.querySelectorAll('.bib-tooltip').forEach(tooltip => {
+                        if (tooltip.style.visibility === 'visible' || tooltip.classList.contains('visible')) {
+                            const trigger = tooltip.closest('.bib-citation');
+                            if (trigger) {
+                                positionTooltip(tooltip, trigger);
+                            }
+                        }
+                    });
+                });
+            }
+            
+            async loadData() {
+                const dataFiles = ['profile', 'experiences', 'education', 'publications'];
+                const results = await Promise.all(
+                    dataFiles.map(file => this.loadToml(`./data/${file}.toml`))
+                );
+                
+                dataFiles.forEach((file, index) => {
+                    this.data[file] = results[index] || this.getFallbackData(file);
+                });
+            }
+            
+            async loadToml(url) {
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const text = await response.text();
+                    console.log(`Raw TOML for ${url}:`, text); // Debug log
+                    const parsed = SimpleTOMLParser.parse(text);
+                    console.log(`Parsed ${url}:`, parsed); // Debug log
+                    return parsed;
+                } catch (error) {
+                    console.warn(`Failed to load ${url}:`, error);
+                    return null;
+                }
+            }
+            
+            getFallbackData(type) {
+                const fallbacks = {
+                    profile: { 
+                        profile: { 
+                            name: "Hainiu Xu",
+                            message: "Hello! I'm Hainiu Xu 👋\n\nI'm a passionate software developer and researcher with a love for\ncreating innovative solutions and exploring cutting-edge technologies.\nWhen I'm not coding, you can find me contributing to open source\nprojects, writing technical blogs, or diving deep into the latest\ndevelopments in AI and machine learning.\n\nWelcome to my digital terminal - feel free to explore!" 
+                        } 
+                    },
+                    experiences: { experience: [{ title: "Research Intern", company: "Huawei London Research Centre", duration: "June 2024 - September 2024" }] },
+                    education: { education: [{ degree: "M.S. Computer Science", school: "Stanford University", year: "2018 - 2020" }] },
+                    publications: { 
+                        publication: [{ 
+                            title: "Example Publication", 
+                            authors: "Hainiu Xu, John Doe",
+                            venue: "Example Venue", 
+                            year: "2024",
+                            paper_url: "https://example.com",
+                            bib: "@article{xu2024example,\n  title={Example Publication},\n  author={Xu, Hainiu and Doe, John},\n  journal={Example Venue},\n  year={2024}\n}"
+                        }] 
+                    }
+                };
+                return fallbacks[type] || {};
+            }
+            
+            renderTerminal() {
+                const terminal = document.getElementById('terminal');
+                terminal.innerHTML = DEMO_SECTIONS.map((section, index) => `
+                    <div class="prompt-line" id="prompt-${index}">
+                        <div class="starship-prompt">
+                            <span class="prompt-symbol">❯</span>
+                            <span class="directory">~/personal</span>
+                            <span class="git-branch"> main</span>
+                        </div>
+                        <div class="command" id="cmd-${index}"></div>
+                    </div>
+                    <div class="output" id="output-${index}">
+                        ${section.render(this.data[section.dataKey], this)}
+                    </div>
+                `).join('') + `
+                    <div class="prompt-line" id="interactive-section">
+                        <div style="color: #e0af68; margin-bottom: 12px; font-size: 0.9em;">
+                            ✨ Try interactive commands: ls, cat [file], help
+                        </div>
+                        <div class="interactive-prompt" id="current-prompt">
+                            <div class="starship-prompt">
+                                <span class="prompt-symbol">❯</span>
+                                <span class="directory">~/personal</span>
+                                <span class="git-branch"> main</span>
+                            </div>
+                            <input type="text" class="command-input" id="command-input" placeholder="Type a command...">
+                        </div>
+                    </div>
+                `;
+                
+                this.setupCommandInput();
+            }
+            
+            setupCommandInput() {
+                const input = document.getElementById('command-input');
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const command = input.value.trim();
+                        if (command) {
+                            this.executeUserCommand(command);
+                            input.value = '';
+                        }
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        if (this.historyIndex < this.commandHistory.length - 1) {
+                            this.historyIndex++;
+                            input.value = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex] || '';
+                        }
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        if (this.historyIndex > 0) {
+                            this.historyIndex--;
+                            input.value = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex] || '';
+                        } else if (this.historyIndex === 0) {
+                            this.historyIndex = -1;
+                            input.value = '';
+                        }
+                    }
+                });
+                
+                // Don't auto-focus on page load to prevent scrolling
+                // Focus will be set after animation completes
+            }
+            
+            executeUserCommand(command) {
+                this.commandHistory.push(command);
+                this.historyIndex = -1;
+                
+                // Create a new prompt line showing the executed command
+                const currentPrompt = document.getElementById('current-prompt');
+                const newPromptLine = document.createElement('div');
+                newPromptLine.className = 'prompt-line visible';
+                newPromptLine.innerHTML = `
+                    <div class="starship-prompt">
+                        <span class="prompt-symbol">❯</span>
+                        <span class="directory">~/personal</span>
+                        <span class="git-branch"> main</span>
+                    </div>
+                    <div class="command">${command}</div>
+                `;
+                
+                currentPrompt.parentNode.insertBefore(newPromptLine, currentPrompt);
+                
+                // Execute command and show output
+                const result = this.commandHandler.executeCommand(command);
+                
+                if (result === 'CLEAR_TERMINAL') {
+                    this.clearTerminal();
+                    return;
+                }
+                
+                if (result) {
+                    const outputDiv = document.createElement('div');
+                    outputDiv.className = 'output visible';
+                    outputDiv.innerHTML = result;
+                    currentPrompt.parentNode.insertBefore(outputDiv, currentPrompt);
+                }
+                
+                // Scroll to bottom smoothly without forcing focus
+                setTimeout(() => {
+                    currentPrompt.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'end',
+                        inline: 'nearest'
+                    });
+                }, 100);
+                
+                // Refocus input after a brief delay
+                setTimeout(() => {
+                    const input = document.getElementById('command-input');
+                    if (input && document.activeElement !== input) {
+                        input.focus();
+                    }
+                }, 300);
+            }
+            
+            clearTerminal() {
+                const terminal = document.getElementById('terminal');
+                const interactiveSection = document.getElementById('interactive-section');
+                terminal.innerHTML = '';
+                terminal.appendChild(interactiveSection);
+                
+                // Focus input without scrolling
+                setTimeout(() => {
+                    const input = document.getElementById('command-input');
+                    if (input) {
+                        input.focus({ preventScroll: true });
+                    }
+                }, 100);
+            }
+            
+            startAnimation() {
+                // Ensure we start at the top
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                
+                document.getElementById('prompt-0').classList.add('visible');
+                setTimeout(() => this.typeCommand(0), 800);
+            }
+            
+            async typeCommand(index) {
+                if (index >= DEMO_SECTIONS.length || this.isTyping) return;
+                
+                this.isTyping = true;
+                const cmdElement = document.getElementById(`cmd-${index}`);
+                const command = DEMO_SECTIONS[index].command;
+                
+                const typingCursor = document.createElement('span');
+                typingCursor.className = 'typing-cursor';
+                cmdElement.appendChild(typingCursor);
+                
+                for (let i = 0; i < command.length; i++) {
+                    const char = command[i];
+                    let speed = 40 + Math.random() * 40;
+                    
+                    if (char === ' ') speed += 50;
+                    if ('.,;:'.includes(char)) speed += 30;
+                    if (Math.random() < 0.1) speed += 100;
+                    
+                    await this.wait(speed);
+                    cmdElement.insertBefore(document.createTextNode(char), typingCursor);
+                }
+                
+                typingCursor.remove();
+                await this.wait(200);
+                this.showOutput(index);
+            }
+            
+            async showOutput(index) {
+                document.getElementById(`output-${index}`).classList.add('visible');
+                await this.wait(800);
+                
+                if (index + 1 < DEMO_SECTIONS.length) {
+                    document.getElementById(`prompt-${index + 1}`).classList.add('visible');
+                    await this.wait(400);
+                    this.isTyping = false;
+                    this.typeCommand(index + 1);
+                } else {
+                    document.getElementById('interactive-section').classList.add('visible');
+                    this.isTyping = false;
+                    this.isInteractive = true;
+                    
+                    // Focus input only after animation completes and with preventScroll
+                    setTimeout(() => {
+                        const input = document.getElementById('command-input');
+                        if (input) {
+                            input.focus({ preventScroll: true });
+                        }
+                    }, 1000);
+                }
+            }
+            
+            wait(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure we start at the top before initializing
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            new TerminalSimulator();
+        });
+        
+        // Prevent automatic scrolling on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Override any hash-based scrolling
+            if (window.location.hash) {
+                window.history.replaceState(null, null, window.location.pathname);
+            }
+        });
+        
+        // Add keyboard interactions
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                console.log('Terminal: Process interrupted');
+            }
+        });
+
+        // Website Statistics Tracker
+        class StatsTracker {
+            constructor() {
+                this.adminPassword = 'hainiu1234'; // Change this to your desired password
+                this.sessionStart = Date.now();
+                this.isAuthenticated = false;
+                this.init();
+            }
+            
+            init() {
+                this.trackVisit();
+                this.trackSession();
+                this.setupBeforeUnload();
+            }
+            
+            trackVisit() {
+                const now = new Date();
+                const today = now.toDateString();
+                const timestamp = now.toISOString();
+                
+                // Get existing stats
+                let stats = this.getStats();
+                
+                // Track total visits
+                stats.totalVisits = (stats.totalVisits || 0) + 1;
+                
+                // Track unique visitors (simplified using localStorage)
+                const visitorId = this.getVisitorId();
+                if (!stats.uniqueVisitors) stats.uniqueVisitors = new Set();
+                stats.uniqueVisitors.add(visitorId);
+                
+                // Track daily visits
+                if (!stats.dailyVisits) stats.dailyVisits = {};
+                stats.dailyVisits[today] = (stats.dailyVisits[today] || 0) + 1;
+                
+                // Track visitor details
+                if (!stats.visitors) stats.visitors = [];
+                stats.visitors.push({
+                    id: visitorId,
+                    timestamp: timestamp,
+                    userAgent: navigator.userAgent,
+                    referrer: document.referrer || 'Direct',
+                    language: navigator.language
+                });
+                
+                // Keep only last 100 visitors
+                if (stats.visitors.length > 100) {
+                    stats.visitors = stats.visitors.slice(-100);
+                }
+                
+                this.saveStats(stats);
+            }
+            
+            trackCommand(command) {
+                let stats = this.getStats();
+                if (!stats.commands) stats.commands = {};
+                stats.commands[command] = (stats.commands[command] || 0) + 1;
+                this.saveStats(stats);
+            }
+            
+            trackSession() {
+                setInterval(() => {
+                    let stats = this.getStats();
+                    const sessionTime = Math.floor((Date.now() - this.sessionStart) / 1000);
+                    if (!stats.sessions) stats.sessions = [];
+                    
+                    // Update current session
+                    const currentSession = {
+                        start: this.sessionStart,
+                        duration: sessionTime
+                    };
+                    
+                    // Replace or add current session
+                    const existingIndex = stats.sessions.findIndex(s => s.start === this.sessionStart);
+                    if (existingIndex >= 0) {
+                        stats.sessions[existingIndex] = currentSession;
+                    } else {
+                        stats.sessions.push(currentSession);
+                    }
+                    
+                    this.saveStats(stats);
+                }, 10000); // Update every 10 seconds
+            }
+            
+            setupBeforeUnload() {
+                window.addEventListener('beforeunload', () => {
+                    let stats = this.getStats();
+                    const sessionTime = Math.floor((Date.now() - this.sessionStart) / 1000);
+                    
+                    if (!stats.sessions) stats.sessions = [];
+                    stats.sessions.push({
+                        start: this.sessionStart,
+                        duration: sessionTime
+                    });
+                    
+                    // Keep only last 50 sessions
+                    if (stats.sessions.length > 50) {
+                        stats.sessions = stats.sessions.slice(-50);
+                    }
+                    
+                    this.saveStats(stats);
+                });
+            }
+            
+            getVisitorId() {
+                let visitorId = localStorage.getItem('visitor_id');
+                if (!visitorId) {
+                    visitorId = 'visitor_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('visitor_id', visitorId);
+                }
+                return visitorId;
+            }
+            
+            getStats() {
+                try {
+                    const stats = localStorage.getItem('website_stats');
+                    if (stats) {
+                        const parsed = JSON.parse(stats);
+                        // Convert uniqueVisitors back to Set if it exists
+                        if (parsed.uniqueVisitors && Array.isArray(parsed.uniqueVisitors)) {
+                            parsed.uniqueVisitors = new Set(parsed.uniqueVisitors);
+                        }
+                        return parsed;
+                    }
+                } catch (e) {
+                    console.warn('Error loading stats:', e);
+                }
+                return {};
+            }
+            
+            saveStats(stats) {
+                try {
+                    // Convert Set to Array for JSON serialization
+                    const toSave = { ...stats };
+                    if (toSave.uniqueVisitors instanceof Set) {
+                        toSave.uniqueVisitors = Array.from(toSave.uniqueVisitors);
+                    }
+                    localStorage.setItem('website_stats', JSON.stringify(toSave));
+                } catch (e) {
+                    console.warn('Error saving stats:', e);
+                }
+            }
+            
+            toggleAdminPanel() {
+                const panel = document.getElementById('adminPanel');
+                panel.classList.toggle('open');
+                
+                if (panel.classList.contains('open') && this.isAuthenticated) {
+                    this.updateAdminPanel();
+                }
+            }
+            
+            closeAdminPanel() {
+                document.getElementById('adminPanel').classList.remove('open');
+            }
+            
+            authenticate() {
+                const password = document.getElementById('adminPassword').value;
+                if (password === this.adminPassword) {
+                    this.isAuthenticated = true;
+                    document.getElementById('adminAuth').style.display = 'none';
+                    document.getElementById('adminContent').style.display = 'block';
+                    this.updateAdminPanel();
+                } else {
+                    alert('Incorrect password');
+                    document.getElementById('adminPassword').value = '';
+                }
+            }
+            
+            updateAdminPanel() {
+                const stats = this.getStats();
+                const today = new Date().toDateString();
+                
+                // Update overview stats
+                document.getElementById('totalVisits').textContent = stats.totalVisits || 0;
+                document.getElementById('uniqueVisitors').textContent = 
+                    stats.uniqueVisitors ? (Array.isArray(stats.uniqueVisitors) ? stats.uniqueVisitors.length : stats.uniqueVisitors.size) : 0;
+                document.getElementById('todayVisits').textContent = 
+                    (stats.dailyVisits && stats.dailyVisits[today]) || 0;
+                
+                // Calculate average session time
+                const avgSession = this.calculateAverageSession(stats.sessions || []);
+                document.getElementById('avgSession').textContent = avgSession;
+                
+                // Update command stats
+                this.updateCommandStats(stats.commands || {});
+                
+                // Update visitor list
+                this.updateVisitorList(stats.visitors || []);
+            }
+            
+            calculateAverageSession(sessions) {
+                if (sessions.length === 0) return '0s';
+                const total = sessions.reduce((sum, session) => sum + (session.duration || 0), 0);
+                const avg = Math.floor(total / sessions.length);
+                
+                if (avg < 60) return `${avg}s`;
+                if (avg < 3600) return `${Math.floor(avg / 60)}m ${avg % 60}s`;
+                return `${Math.floor(avg / 3600)}h ${Math.floor((avg % 3600) / 60)}m`;
+            }
+            
+            updateCommandStats(commands) {
+                const container = document.getElementById('commandStats');
+                container.innerHTML = '';
+                
+                const sortedCommands = Object.entries(commands)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 10);
+                
+                sortedCommands.forEach(([command, count]) => {
+                    const item = document.createElement('div');
+                    item.className = 'stat-item';
+                    item.innerHTML = `
+                        <span class="stat-label">${command}:</span>
+                        <span class="stat-value">${count}</span>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+            
+            updateVisitorList(visitors) {
+                const container = document.getElementById('visitorList');
+                container.innerHTML = '';
+                
+                visitors.slice(-20).reverse().forEach(visitor => {
+                    const item = document.createElement('div');
+                    item.className = 'visitor-item';
+                    const date = new Date(visitor.timestamp);
+                    item.innerHTML = `
+                        <div>${visitor.referrer}</div>
+                        <div class="visitor-time">${date.toLocaleString()}</div>
+                    `;
+                    container.appendChild(item);
+                });
+            }
+            
+            exportStats() {
+                const stats = this.getStats();
+                const dataStr = JSON.stringify(stats, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `website_stats_${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+            }
+            
+            clearStats() {
+                if (confirm('Are you sure you want to clear all statistics data?')) {
+                    localStorage.removeItem('website_stats');
+                    this.updateAdminPanel();
+                    alert('Statistics cleared successfully');
+                }
+            }
+        }
+        
+        // Initialize stats tracker
+        window.statsTracker = new StatsTracker();
+    </script>
+</body>
+</html>

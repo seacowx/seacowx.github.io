@@ -1,0 +1,77 @@
+[[publication]]
+title = "EnigmaToM: Improve LLMs' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States"
+authors = "Hainiu Xu, Siya Qi, Jiazheng Li, Yuxiang Zhou, Jinhua Du, Caroline Catmur, Yulan He"
+venue = "Findings of ACL 2025"
+year = "2025"
+paper_url = "https://arxiv.org/abs/2503.03340"
+bib = """
+@inproceedings{xu2025enigmatom,
+  title={EnigmaToM: Improve LLMs' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States},
+  author={Xu, Hainiu and He, Yulan and Catmur, Caroline and Du, Jinhua},
+  booktitle={Findings of the Association for Computational Linguistics: ACL 2025},
+  year={2025}
+}
+"""
+
+[[publication]]
+title = "Modeling Subjectivity in Cognitive Appraisal with Language Models"
+authors = "Yuxiang Zhou*, Hainiu Xu*, Desmond C. Ong, Petr Slovak, Yulan He"
+venue = "In submission"
+year = "2025"
+paper_url = "https://arxiv.org/abs/2503.11381"
+bib = """
+@article{zhou2025modeling,
+  title={Modeling Subjectivity in Cognitive Appraisal with Language Models},
+  author={Zhou, Yuxiang and Xu, Hainiu and Ong, Desmond C and Slovak, Petr and He, Yulan},
+  journal={arXiv preprint arXiv:2503.11381},
+  year={2025}
+}
+"""
+
+[[publication]]
+title = "OpenToM : A Comprehensive Benchmark for Evaluating Theory-of-Mind Reasoning Capabilities of Large Language Models"
+authors = "Hainiu Xu, Runcong Zhao, Lixing Zhu, Jinhua Du, Yulan He"
+venue = "ACL 2024"
+year = "2024"
+paper_url = "https://aclanthology.org/2024.acl-long.466/"
+bib = """
+@inproceedings{xu2024opentom,
+  title={OpenToM: A Comprehensive Benchmark for Evaluating Theory-of-Mind Reasoning Capabilities of Large Language Models},
+  author={Xu, Hainiu and Zhao, Runcong and Zhu, Lixing and Du, Jinhua and He, Yulan},
+  booktitle={Proceedings of the 62nd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages={8593--8623},
+  year={2024}
+}
+"""
+
+[[publication]]
+title = "Causal Reasoning of Entities and Events in Procedural Texts"
+authors = "Li Zhang*, Hainiu Xu*, Yue Yang, Shuyan Zhou, Weiqiu You, Manni Arora, Chris Callison-Burch" 
+venue = "Findings of EACL 2023"
+year = "2023
+paper_url = "https://aclanthology.org/2023.findings-eacl.31/"
+bib = """   
+@inproceedings{zhang2023causal,
+  title={Causal Reasoning of Entities and Events in Procedural Texts},
+  author={Zhang, Li and Xu, Hainiu and Yang, Yue and Zhou, Shuyan and You, Weiqiu and Arora, Manni and Callison-Burch, Chris},
+  booktitle={Findings of the Association for Computational Linguistics: EACL 2023},
+  pages={415--431},
+  year={2023}
+}
+"""
+
+[[publication]]
+title = "Exploring the Curious Case of Code Prompts"
+authors = "Li Zhang*, Liam Dugan*, Hainiu Xu*, Chris Callison-Burch"
+venue = "NLRSE @ ACL 2023"
+year = "2023"
+paper_url = "https://aclanthology.org/2023.nlrse-1.2/"
+bib = """
+@inproceedings{zhang2023exploring,
+  title={Exploring the Curious Case of Code Prompts},
+  author={Zhang, Li and Dugan, Liam and Xu, Hainiu and Callison-Burch, Chris},
+  booktitle={Proceedings of the 1st Workshop on Natural Language Reasoning and Structured Explanations (NLRSE)},
+  pages={9--17},
+  year={2023}
+}
+"""
