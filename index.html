@@ -104,7 +104,7 @@
         
         .prompt-line {
             margin-bottom: 24px;
-            margin-top: 40px;
+            margin-top: 80px;
             opacity: 0;
             transform: translateY(10px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -122,7 +122,7 @@
         .starship-prompt {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         
         .prompt-symbol {
@@ -148,7 +148,7 @@
         
         .typing-cursor {
             display: inline-block;
-            width: 2px;
+            width: 10px;
             height: 20px;
             background-color: #c0caf5;
             animation: blink 1s infinite;
@@ -158,7 +158,7 @@
         
         .cursor {
             display: inline-block;
-            width: 8px;
+            width: 10px;
             height: 20px;
             background-color: #c0caf5;
             animation: blink 1s infinite;
@@ -171,8 +171,8 @@
         }
         
         .output {
-            margin-left: 20px;
-            margin-bottom: 32px;
+            margin-left: 0;
+            margin-bottom: 8px;
             color: #c0caf5;
             opacity: 0;
             transform: translateY(5px);
@@ -394,6 +394,94 @@
             color: #9ece6a;
             font-size: 0.9em;
             margin-bottom: 2px;
+        }
+        
+        .author-highlight {
+            display: inline;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b9d, #c44569, #f8b500, #feca57);
+            background-size: 300% 300%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            animation: authorGradientShift 4s ease-in-out infinite, authorGlow 2s ease-in-out infinite alternate;
+            padding: 1px 4px;
+            border-radius: 4px;
+            position: relative;
+            text-shadow: none;
+        }
+        
+        .author-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 107, 157, 0.15), 
+                rgba(196, 69, 105, 0.15), 
+                rgba(248, 181, 0, 0.15), 
+                rgba(254, 202, 87, 0.15)
+            );
+            background-size: 300% 300%;
+            animation: authorGradientShift 4s ease-in-out infinite;
+            border-radius: 4px;
+            z-index: -1;
+            filter: blur(1px);
+        }
+        
+        .author-highlight::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 107, 157, 0.08), 
+                rgba(196, 69, 105, 0.08), 
+                rgba(248, 181, 0, 0.08), 
+                rgba(254, 202, 87, 0.08)
+            );
+            border: 1px solid rgba(255, 107, 157, 0.3);
+            border-radius: 4px;
+            z-index: -1;
+            box-shadow: 
+                0 0 8px rgba(255, 107, 157, 0.3),
+                0 0 16px rgba(248, 181, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        @keyframes authorGradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+        
+        @keyframes authorGlow {
+            0% { 
+                filter: brightness(1) saturate(1);
+                transform: scale(1);
+            }
+            100% { 
+                filter: brightness(1.1) saturate(1.2);
+                transform: scale(1.02);
+            }
+        }
+        
+        /* Fallback for browsers that don't support background-clip: text */
+        @supports not (-webkit-background-clip: text) {
+            .author-highlight {
+                color: #ff6b9d;
+                background: linear-gradient(135deg, 
+                    rgba(255, 107, 157, 0.3), 
+                    rgba(248, 181, 0, 0.3)
+                );
+                -webkit-text-fill-color: unset;
+            }
         }
         
         .publication-venue {
@@ -669,6 +757,7 @@
         .interactive-prompt {
             margin-bottom: 8px;
             margin-top: 20px;
+            position: relative;
         }
         
         .command-input {
@@ -679,11 +768,23 @@
             font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
             font-size: 14px;
             width: 100%;
+            caret-color: transparent;
+            position: relative;
+        }
+        
+        .custom-cursor {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background-color: #c0caf5;
+            pointer-events: none;
+            animation: blink 1s infinite;
+            z-index: 10;
         }
         
         .file-list {
             color: #7dcfff;
-            margin-left: 20px;
+            margin-left: 0;
         }
         
         .file-item {
@@ -695,13 +796,14 @@
         
         .error-message {
             color: #f7768e;
-            margin-left: 20px;
+            margin-left: 0;
         }
         
         .help-message {
             color: #e0af68;
-            margin-left: 20px;
+            margin-left: 0;
             font-size: 0.9em;
+            white-space: pre-line;
         }
         
         /* Admin Panel Styles */
@@ -1060,6 +1162,17 @@
             );
         }
 
+        // Helper function to highlight author name in publications
+        function highlightAuthorName(authorString) {
+            if (!authorString) return '';
+            
+            // Replace "Hainiu Xu" with highlighted version, including any asterisk
+            return authorString.replace(
+                /(Hainiu Xu)(\*?)/g, 
+                '<span class="author-highlight">$1$2</span>'
+            );
+        }
+
         // Tooltip positioning function
         function positionTooltip(tooltipElement, triggerElement) {
             const tooltip = tooltipElement;
@@ -1114,7 +1227,8 @@
                     'echo': this.echoVariable.bind(this),
                     'help': this.showHelp.bind(this),
                     'clear': this.clearTerminal.bind(this),
-                    'pwd': this.printWorkingDirectory.bind(this)
+                    'pwd': this.printWorkingDirectory.bind(this),
+                    'open': this.openFile.bind(this)
                 };
             }
             
@@ -1140,6 +1254,7 @@
                 return `<div class="file-list">
                     <div class="file-item">welcome_message.txt</div>
                     <div class="file-item">publications.txt</div>
+                    <div class="file-item">cv.pdf</div>
                 </div>`;
             }
             
@@ -1209,10 +1324,11 @@ cat [file]           - display file contents
 head [-n num] [file] - display first lines of file
 echo $VARIABLE       - display environment variable
 pwd                  - print working directory
+open [file]          - open file in new window
 clear                - clear terminal
 help                 - show this help message
 
-Available files: welcome_message.txt, publications.txt
+Available files: welcome_message.txt, publications.txt, cv.pdf
 Available variables: $EXPERIENCES, $EDUCATION</div>`;
             }
             
@@ -1222,6 +1338,22 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
             
             printWorkingDirectory(args) {
                 return `<div class="output">/home/user/personal</div>`;
+            }
+            
+            openFile(args) {
+                if (args.length === 0) {
+                    return `<div class="error-message">open: missing file operand</div>`;
+                }
+                
+                const filename = args[0];
+                
+                if (filename === 'cv.pdf') {
+                    // Open the CV in a new window
+                    window.open('assets/Hainiu-CV-2025.pdf', '_blank');
+                    return `<div class="output">Opening ${filename} in new window...</div>`;
+                } else {
+                    return `<div class="error-message">open: ${filename}: No such file or directory</div>`;
+                }
             }
             
             renderAllPublications() {
@@ -1236,6 +1368,9 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                 
                 return `
                     <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #414868;">
+                        <div style="color: #565f89; font-size: 0.8em; margin-bottom: 12px; font-style: italic;">
+                            * indicates equal contribution
+                        </div>
                         <div style="color: #e0af68; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
                             <span style="font-size: 1.2em;">📚</span>
                             For a complete list of publications, visit my:
@@ -1260,7 +1395,7 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                     return `
                         <div class="item publication">
                             <div class="item-title">${titleWithLink}</div>
-                            ${pub.authors ? `<div class="publication-authors">${pub.authors}</div>` : ''}
+                            ${pub.authors ? `<div class="publication-authors">${highlightAuthorName(pub.authors)}</div>` : ''}
                             <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
                             <div class="publication-links">
                                 ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
@@ -1351,7 +1486,7 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                         return `
                             <div class="item publication">
                                 <div class="item-title">${titleWithLink}</div>
-                                ${pub.authors ? `<div class="publication-authors">${pub.authors}</div>` : ''}
+                                ${pub.authors ? `<div class="publication-authors">${highlightAuthorName(pub.authors)}</div>` : ''}
                                 <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
                                 <div class="publication-links">
                                     ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
@@ -1375,6 +1510,9 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                     
                     const googleScholarLink = `
                         <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #414868;">
+                            <div style="color: #565f89; font-size: 0.8em; margin-bottom: 12px; font-style: italic;">
+                                * indicates equal contribution
+                            </div>
                             <div style="color: #e0af68; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
                                 <span style="font-size: 1.2em;">📚</span>
                                 For a complete list of publications, visit my:
@@ -1505,6 +1643,8 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                         ${section.render(this.data[section.dataKey], this)}
                     </div>
                 `).join('') + `
+                    <br>
+                    <br>
                     <div class="prompt-line" id="interactive-section">
                         <div style="color: #e0af68; margin-bottom: 12px; font-size: 0.9em;">
                             ✨ Try interactive commands: ls, cat [file], help
@@ -1526,29 +1666,98 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
             setupCommandInput() {
                 const input = document.getElementById('command-input');
                 
+                // Create custom cursor element
+                const cursor = document.createElement('div');
+                cursor.className = 'custom-cursor';
+                input.parentNode.appendChild(cursor);
+                
+                // Create a hidden span to measure text position exactly like the input
+                const measureSpan = document.createElement('span');
+                measureSpan.style.position = 'absolute';
+                measureSpan.style.visibility = 'hidden';
+                measureSpan.style.whiteSpace = 'pre';
+                measureSpan.style.pointerEvents = 'none';
+                // Copy all relevant styles from input to measure span
+                const inputStyle = window.getComputedStyle(input);
+                measureSpan.style.font = inputStyle.font;
+                measureSpan.style.fontSize = inputStyle.fontSize;
+                measureSpan.style.fontFamily = inputStyle.fontFamily;
+                measureSpan.style.fontWeight = inputStyle.fontWeight;
+                measureSpan.style.letterSpacing = inputStyle.letterSpacing;
+                measureSpan.style.lineHeight = inputStyle.lineHeight;
+                measureSpan.style.padding = inputStyle.padding;
+                measureSpan.style.border = inputStyle.border;
+                measureSpan.style.margin = inputStyle.margin;
+                input.parentNode.appendChild(measureSpan);
+                
+                // Function to update cursor position
+                const updateCursorPosition = () => {
+                    const inputValue = input.value;
+                    const cursorPosition = input.selectionStart;
+                    
+                    // Get the text before cursor
+                    const textBeforeCursor = inputValue.substring(0, cursorPosition);
+                    
+                    // Update measure span with the text before cursor
+                    measureSpan.textContent = textBeforeCursor;
+                    
+                    // Get the width of text before cursor
+                    const textWidth = measureSpan.getBoundingClientRect().width;
+                    
+                    // Position cursor at the same location as the input text
+                    const inputRect = input.getBoundingClientRect();
+                    const containerRect = input.parentNode.getBoundingClientRect();
+                    
+                    cursor.style.left = Math.round(textWidth) + 'px';
+                    cursor.style.top = Math.round(inputRect.top - containerRect.top) + 'px';
+                    cursor.style.display = input === document.activeElement ? 'block' : 'none';
+                };
+                
+                // Update cursor position on input and cursor movement
+                input.addEventListener('input', updateCursorPosition);
+                input.addEventListener('keyup', updateCursorPosition);
+                input.addEventListener('mouseup', updateCursorPosition);
+                input.addEventListener('focus', () => {
+                    cursor.style.display = 'block';
+                    updateCursorPosition();
+                });
+                input.addEventListener('blur', () => {
+                    cursor.style.display = 'none';
+                });
+                
+                // Initial cursor position
+                updateCursorPosition();
+                
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         const command = input.value.trim();
                         if (command) {
                             this.executeUserCommand(command);
                             input.value = '';
+                            updateCursorPosition();
                         }
                     } else if (e.key === 'ArrowUp') {
                         e.preventDefault();
                         if (this.historyIndex < this.commandHistory.length - 1) {
                             this.historyIndex++;
                             input.value = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex] || '';
+                            setTimeout(updateCursorPosition, 0);
                         }
                     } else if (e.key === 'ArrowDown') {
                         e.preventDefault();
                         if (this.historyIndex > 0) {
                             this.historyIndex--;
                             input.value = this.commandHistory[this.commandHistory.length - 1 - this.historyIndex] || '';
+                            setTimeout(updateCursorPosition, 0);
                         } else if (this.historyIndex === 0) {
                             this.historyIndex = -1;
                             input.value = '';
+                            setTimeout(updateCursorPosition, 0);
                         }
                     }
+                    
+                    // Update cursor position after any key press
+                    setTimeout(updateCursorPosition, 0);
                 });
                 
                 // Don't auto-focus on page load to prevent scrolling
