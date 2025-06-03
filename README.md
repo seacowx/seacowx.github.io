@@ -1,2 +1,3 @@
 # seacowx.github.io
-Personal Website
+Personal Website 
+Completely written by Cursor.
