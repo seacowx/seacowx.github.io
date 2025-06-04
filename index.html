@@ -8,7 +8,24 @@
         @import url('https://cdn.jsdelivr.net/npm/@fontsource/maple-mono@5.1.0/index.css');
         
         :root {
-            /* Dark theme (default) */
+            /* Atom One Light theme (default) */
+            --bg-color: #fafafa;
+            --terminal-bg: #ffffff;
+            --text-color: #383a42;
+            --border-color: #e5e5e6;
+            --prompt-color: #0184bc;
+            --command-color: #a626a4;
+            --output-color: #383a42;
+            --welcome-bg: rgba(1, 132, 188, 0.1);
+            --link-color: #a626a4;
+            --link-hover: #383a42;
+            --input-bg: rgba(229, 229, 230, 0.3);
+            --input-border: #d0d0d0;
+            --cursor-color: #e45649;
+        }
+
+        /* Dark theme */
+        [data-theme="dark"] {
             --bg-color: #1a1b26;
             --terminal-bg: #1a1b26;
             --text-color: #c0caf5;
@@ -23,23 +40,6 @@
             --input-border: #565f89;
             --cursor-color: #f7768e;
         }
-
-        /* Light theme */
-        [data-theme="light"] {
-            --bg-color: #ffffff;
-            --terminal-bg: #fafafa;
-            --text-color: #24283b;
-            --border-color: #e1e2e7;
-            --prompt-color: #0f4c75;
-            --command-color: #8b5a2b;
-            --output-color: #24283b;
-            --welcome-bg: rgba(15, 76, 117, 0.05);
-            --link-color: #8b5a2b;
-            --link-hover: #24283b;
-            --input-bg: rgba(225, 226, 231, 0.5);
-            --input-border: #c0c0c0;
-            --cursor-color: #d63031;
-        }
         
         * {
             margin: 0;
@@ -49,8 +49,8 @@
         
         body {
             font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-            background-color: #1a1b26;
-            color: #c0caf5;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
             overflow-x: auto;
         }
@@ -63,7 +63,7 @@
         }
         
         .terminal-header {
-            background: #414868;
+            background: var(--border-color);
             border-radius: 8px 8px 0 0;
             padding: 12px 16px;
             display: flex;
@@ -71,32 +71,16 @@
             gap: 8px;
         }
         
-        .window-controls {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .control {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
-        .close { background: #ff5f56; }
-        .minimize { background: #ffbd2e; }
-        .maximize { background: #27ca3f; }
-        
         .terminal-title {
-            color: #c0caf5;
+            color: var(--text-color);
             font-size: 14px;
-            margin-left: 16px;
         }
         
         .terminal-body {
-            background: #1a1b26;
+            background: var(--terminal-bg);
             border-radius: 0 0 8px 8px;
             padding: 20px;
-            border: 1px solid #414868;
+            border: 1px solid var(--border-color);
             border-top: none;
             min-height: 500px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -126,31 +110,63 @@
         }
         
         .prompt-symbol {
-            color: #7aa2f7;
+            color: var(--prompt-color);
             margin-right: 8px;
             font-weight: 500;
         }
         
         .directory {
-            color: #9ece6a;
+            color: #50a14f;
             margin-right: 8px;
         }
         
         .git-branch {
-            color: #f7768e;
+            color: #e45649;
             margin-right: 8px;
         }
         
         .command {
-            color: #bb9af7;
+            color: var(--command-color);
             font-weight: 500;
+        }
+        
+        /* Bash syntax highlighting */
+        .bash-command {
+            color: #a626a4;
+            font-weight: 500;
+        }
+        
+        .bash-flag {
+            color: #0184bc;
+            font-weight: 500;
+        }
+        
+        .bash-argument {
+            color: #50a14f;
+        }
+        
+        .bash-string {
+            color: #c18401;
+        }
+        
+        .bash-variable {
+            color: #e45649;
+            font-weight: 500;
+        }
+        
+        .bash-operator {
+            color: #383a42;
+        }
+        
+        .bash-number {
+            color: #986801;
         }
         
         .typing-cursor {
             display: inline-block;
             width: 10px;
             height: 20px;
-            background-color: #c0caf5;
+            background-color: var(--text-color);
             animation: blink 1s infinite;
             margin-left: 1px;
             vertical-align: text-bottom;
@@ -160,7 +176,7 @@
             display: inline-block;
             width: 10px;
             height: 20px;
-            background-color: #c0caf5;
+            background-color: var(--text-color);
             animation: blink 1s infinite;
             margin-left: 2px;
         }
@@ -173,7 +189,7 @@
         .output {
             margin-left: 0;
             margin-bottom: 8px;
-            color: #c0caf5;
+            color: var(--output-color);
             opacity: 0;
             transform: translateY(5px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -185,34 +201,57 @@
         }
         
         .welcome-text {
-            color: #7dcfff;
+            color: var(--prompt-color);
             line-height: 1.8;
             white-space: pre-line;
+            display: block;
+        }
+        
+        .welcome-content {
+            margin-top: 16px;
+        }
+        
+        .profile-photo {
+            width: 300px;
+            height: 300px;
+            border-radius: 30px;
+            object-fit: cover;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+            margin: 0 0 20px 0;
+        }
+        
+        .profile-photo:hover {
+            border-color: var(--prompt-color);
+            box-shadow: 0 6px 20px rgba(1, 132, 188, 0.3);
+            transform: translateY(-2px);
         }
         
         .welcome-text a {
-            color: #bb9af7;
+            color: #a626a4;
             text-decoration: underline;
-            text-decoration-color: #565f89;
+            text-decoration-color: #e5e5e6;
             transition: all 0.2s ease;
         }
         
         .welcome-text a:hover {
-            color: #c0caf5;
-            text-decoration-color: #bb9af7;
-            background-color: rgba(187, 154, 247, 0.1);
+            color: #823085;
+            text-decoration-color: #a626a4;
+            background-color: rgba(166, 38, 164, 0.1);
             padding: 1px 2px;
             border-radius: 3px;
         }
         
         .welcome-text a:visited {
-            color: #f7768e;
+            color: #e45649;
         }
         
         .welcome-name {
             display: inline-block;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff79c6, #bd93f9, #50fa7b, #8be9fd);
+            background: linear-gradient(135deg, #0184bc, #a626a4, #50a14f, #c18401);
             background-size: 300% 300%;
             background-clip: text;
             -webkit-background-clip: text;
@@ -232,7 +271,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(255, 121, 198, 0.15), rgba(189, 147, 249, 0.15), rgba(80, 250, 123, 0.15), rgba(139, 233, 253, 0.15));
+            background: linear-gradient(135deg, rgba(1, 132, 188, 0.15), rgba(166, 38, 164, 0.15), rgba(80, 161, 79, 0.15), rgba(193, 132, 1, 0.15));
             border-radius: 6px;
             z-index: -1;
             animation: backgroundPulse 3s ease-in-out infinite;
@@ -256,7 +295,7 @@
         .highlighted-name {
             font-weight: bold;
             font-size: 1.05em;
-            background: linear-gradient(135deg, #ff9500, #ff6b35, #f72585, #7209b7, #560bad);
+            background: linear-gradient(135deg, #e45649, #c18401, #a626a4, #0184bc);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -278,11 +317,10 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, 
-                rgba(255, 149, 0, 0.1), 
-                rgba(255, 107, 53, 0.1), 
-                rgba(247, 37, 133, 0.1), 
-                rgba(114, 9, 183, 0.1), 
-                rgba(86, 11, 173, 0.1)
+                rgba(228, 86, 73, 0.1), 
+                rgba(193, 132, 1, 0.1), 
+                rgba(166, 38, 164, 0.1), 
+                rgba(1, 132, 188, 0.1)
             );
             background-size: 200% 200%;
             animation: gradientShift 3s ease-in-out infinite;
@@ -299,18 +337,17 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, 
-                rgba(255, 149, 0, 0.05), 
-                rgba(255, 107, 53, 0.05), 
-                rgba(247, 37, 133, 0.05), 
-                rgba(114, 9, 183, 0.05), 
-                rgba(86, 11, 173, 0.05)
+                rgba(228, 86, 73, 0.05), 
+                rgba(193, 132, 1, 0.05), 
+                rgba(166, 38, 164, 0.05), 
+                rgba(1, 132, 188, 0.05)
             );
-            border: 1px solid rgba(247, 37, 133, 0.3);
+            border: 1px solid rgba(228, 86, 73, 0.3);
             border-radius: 6px;
             z-index: -1;
             box-shadow: 
-                0 0 10px rgba(247, 37, 133, 0.2),
-                0 0 20px rgba(114, 9, 183, 0.1),
+                0 0 10px rgba(228, 86, 73, 0.2),
+                0 0 20px rgba(166, 38, 164, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         
@@ -328,11 +365,11 @@
         
         /* Fallback for browsers that don't support background-clip: text */
         @supports not (-webkit-background-clip: text) {
-            .highlighted-name {
-                color: #ff6b35;
+            .author-highlight {
+                color: #e45649;
                 background: linear-gradient(135deg, 
-                    rgba(255, 107, 53, 0.2), 
-                    rgba(247, 37, 133, 0.2)
+                    rgba(228, 86, 73, 0.3), 
+                    rgba(193, 132, 1, 0.3)
                 );
                 -webkit-text-fill-color: unset;
             }
@@ -345,53 +382,53 @@
         }
         
         .item.experience { 
-            border-left-color: #7aa2f7;
+            border-left-color: #0184bc;
             margin-bottom: 16px;
         }
         
         .item.education { 
-            border-left-color: #bb9af7;
+            border-left-color: #a626a4;
             margin-bottom: 16px;
         }
         
         .item.publication { 
-            border-left-color: #9ece6a;
+            border-left-color: #50a14f;
             margin-bottom: 24px;
         }
         
         .item-title {
-            color: #9ece6a;
+            color: #50a14f;
             font-weight: 500;
         }
         
         .item-subtitle {
-            color: #e0af68;
+            color: #c18401;
         }
         
         .item-meta {
-            color: #565f89;
+            color: #a0a1a7;
             font-size: 0.9em;
         }
         
         .publication .item-title {
-            color: #7dcfff;
+            color: #0184bc;
             margin-bottom: 4px;
         }
         
         .publication .item-title a {
-            color: #7dcfff;
+            color: #0184bc;
             text-decoration: none;
             border-bottom: 1px solid transparent;
             transition: all 0.2s ease;
         }
         
         .publication .item-title a:hover {
-            color: #c0caf5;
-            border-bottom-color: #7dcfff;
+            color: #014f7b;
+            border-bottom-color: #0184bc;
         }
         
         .publication-authors {
-            color: #9ece6a;
+            color: #50a14f;
             font-size: 0.9em;
             margin-bottom: 2px;
         }
@@ -399,7 +436,7 @@
         .author-highlight {
             display: inline;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff6b9d, #c44569, #f8b500, #feca57);
+            background: linear-gradient(135deg, #e45649, #c18401, #a626a4, #0184bc);
             background-size: 300% 300%;
             background-clip: text;
             -webkit-background-clip: text;
@@ -420,10 +457,10 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, 
-                rgba(255, 107, 157, 0.15), 
-                rgba(196, 69, 105, 0.15), 
-                rgba(248, 181, 0, 0.15), 
-                rgba(254, 202, 87, 0.15)
+                rgba(228, 86, 73, 0.15), 
+                rgba(193, 132, 1, 0.15), 
+                rgba(166, 38, 164, 0.15), 
+                rgba(1, 132, 188, 0.15)
             );
             background-size: 300% 300%;
             animation: authorGradientShift 4s ease-in-out infinite;
@@ -440,17 +477,17 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, 
-                rgba(255, 107, 157, 0.08), 
-                rgba(196, 69, 105, 0.08), 
-                rgba(248, 181, 0, 0.08), 
-                rgba(254, 202, 87, 0.08)
+                rgba(228, 86, 73, 0.08), 
+                rgba(193, 132, 1, 0.08), 
+                rgba(166, 38, 164, 0.08), 
+                rgba(1, 132, 188, 0.08)
             );
-            border: 1px solid rgba(255, 107, 157, 0.3);
+            border: 1px solid rgba(228, 86, 73, 0.3);
             border-radius: 4px;
             z-index: -1;
             box-shadow: 
-                0 0 8px rgba(255, 107, 157, 0.3),
-                0 0 16px rgba(248, 181, 0, 0.2),
+                0 0 8px rgba(228, 86, 73, 0.3),
+                0 0 16px rgba(193, 132, 1, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         
@@ -475,332 +512,17 @@
         /* Fallback for browsers that don't support background-clip: text */
         @supports not (-webkit-background-clip: text) {
             .author-highlight {
-                color: #ff6b9d;
+                color: #e45649;
                 background: linear-gradient(135deg, 
-                    rgba(255, 107, 157, 0.3), 
-                    rgba(248, 181, 0, 0.3)
+                    rgba(228, 86, 73, 0.3), 
+                    rgba(193, 132, 1, 0.3)
                 );
                 -webkit-text-fill-color: unset;
             }
         }
         
-        .publication-venue {
-            color: #e0af68;
-            font-size: 0.9em;
-        }
-        
-        .publication-links {
-            margin-top: 4px;
-            display: flex;
-            gap: 12px;
-            font-size: 0.85em;
-        }
-        
-        .publication-link {
-            color: #bb9af7;
-            text-decoration: none;
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid #565f89;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            background: linear-gradient(135deg, rgba(187, 154, 247, 0.05), rgba(187, 154, 247, 0.02));
-            backdrop-filter: blur(10px);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 500;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .publication-link:hover {
-            color: #c0caf5;
-            border-color: #bb9af7;
-            background: linear-gradient(135deg, rgba(187, 154, 247, 0.15), rgba(187, 154, 247, 0.08));
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(187, 154, 247, 0.3);
-        }
-        
-        .publication-link.paper-link {
-            border-color: #7dcfff;
-            color: #7dcfff;
-            background: linear-gradient(135deg, rgba(125, 207, 255, 0.08), rgba(125, 207, 255, 0.03));
-        }
-        
-        .publication-link.paper-link:hover {
-            border-color: #89ddff;
-            color: #89ddff;
-            background: linear-gradient(135deg, rgba(125, 207, 255, 0.2), rgba(125, 207, 255, 0.1));
-            box-shadow: 0 4px 12px rgba(125, 207, 255, 0.3);
-        }
-        
-        .publication-link.bib-link {
-            border-color: #9ece6a;
-            color: #9ece6a;
-            background: linear-gradient(135deg, rgba(158, 206, 106, 0.08), rgba(158, 206, 106, 0.03));
-        }
-        
-        .publication-link.bib-link:hover {
-            border-color: #a9e34b;
-            color: #a9e34b;
-            background: linear-gradient(135deg, rgba(158, 206, 106, 0.2), rgba(158, 206, 106, 0.1));
-            box-shadow: 0 4px 12px rgba(158, 206, 106, 0.3);
-        }
-        
-        .link-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            font-size: 12px;
-            font-weight: bold;
-            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-            position: relative;
-        }
-        
-        .paper-icon {
-            background: currentColor;
-            border-radius: 2px;
-            position: relative;
-            opacity: 0.9;
-        }
-        
-        .paper-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: -2px;
-            bottom: -2px;
-            background: currentColor;
-            border-radius: 2px;
-            opacity: 0.6;
-            z-index: -1;
-        }
-        
-        .paper-icon::after {
-            content: '';
-            position: absolute;
-            top: 25%;
-            left: 20%;
-            right: 20%;
-            height: 1px;
-            background: #1a1b26;
-            box-shadow: 0 3px 0 #1a1b26, 0 6px 0 #1a1b26;
-        }
-        
-        .bib-icon {
-            background: currentColor;
-            border-radius: 2px;
-            position: relative;
-            opacity: 0.9;
-        }
-        
-        .bib-icon::before {
-            content: '';
-            position: absolute;
-            top: 15%;
-            left: 15%;
-            right: 15%;
-            bottom: 15%;
-            background: #1a1b26;
-            border-radius: 1px;
-        }
-        
-        .bib-icon::after {
-            content: '';
-            position: absolute;
-            top: 30%;
-            left: 25%;
-            right: 25%;
-            height: 1px;
-            background: currentColor;
-            box-shadow: 
-                0 2px 0 currentColor,
-                0 4px 0 currentColor,
-                0 7px 0 currentColor,
-                0 9px 0 currentColor;
-        }
-        
-        .scholar-icon {
-            background: currentColor;
-            border-radius: 50%;
-            position: relative;
-        }
-        
-        .scholar-icon::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 20%;
-            right: 20%;
-            bottom: 20%;
-            background: #1a1b26;
-            border-radius: 50%;
-        }
-        
-        .scholar-icon::after {
-            content: '';
-            position: absolute;
-            top: 35%;
-            left: 35%;
-            right: 35%;
-            bottom: 35%;
-            background: currentColor;
-            border-radius: 50%;
-        }
-        
-        .bib-citation {
-            position: relative;
-        }
-        
-        .bib-tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #1a1b26;
-            border: 1px solid #414868;
-            border-radius: 6px;
-            padding: 12px;
-            font-size: 11px;
-            line-height: 1.4;
-            color: #c0caf5;
-            white-space: pre-line;
-            z-index: 1000;
-            min-width: 400px;
-            max-width: 500px;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            margin-bottom: 8px;
-            pointer-events: none;
-        }
-        
-        .bib-tooltip.position-top {
-            bottom: 100%;
-            top: auto;
-            margin-bottom: 8px;
-            margin-top: 0;
-        }
-        
-        .bib-tooltip.position-bottom {
-            bottom: auto;
-            top: 100%;
-            margin-bottom: 0;
-            margin-top: 8px;
-        }
-        
-        .bib-tooltip.position-left {
-            left: 0;
-            transform: translateX(0);
-        }
-        
-        .bib-tooltip.position-right {
-            left: auto;
-            right: 0;
-            transform: translateX(0);
-        }
-        
-        .bib-tooltip::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-        }
-        
-        .bib-tooltip.position-top::after {
-            top: 100%;
-            border-top-color: #414868;
-            border-bottom: none;
-        }
-        
-        .bib-tooltip.position-bottom::after {
-            bottom: 100%;
-            border-bottom-color: #414868;
-            border-top: none;
-        }
-        
-        .bib-tooltip.position-left::after {
-            left: 20px;
-            transform: translateX(0);
-        }
-        
-        .bib-tooltip.position-right::after {
-            left: auto;
-            right: 20px;
-            transform: translateX(0);
-        }
-        
-        .bib-citation:hover .bib-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .education .item-title {
-            color: #7dcfff;
-        }
-        
-        .education .item-subtitle {
-            color: #f7768e;
-        }
-        
-        .loading {
-            color: #565f89;
-            font-style: italic;
-        }
-        
-        /* Interactive terminal styles */
-        .interactive-prompt {
-            margin-bottom: 8px;
-            margin-top: 20px;
-            position: relative;
-        }
-        
-        .command-input {
-            background: none;
-            border: none;
-            outline: none;
-            color: var(--command-color);
-            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-            font-size: 14px;
-            width: 100%;
-            caret-color: transparent;
-            position: relative;
-        }
-        
-        .custom-cursor {
-            position: absolute;
-            width: 10px;
-            height: 20px;
-            background-color: #c0caf5;
-            pointer-events: none;
-            animation: blink 1s infinite;
-            z-index: 10;
-        }
-        
-        .file-list {
-            color: #7dcfff;
-            margin-left: 0;
-        }
-        
-        .file-item {
-            display: inline-block;
-            margin-right: 20px;
-            padding: 2px 4px;
-            color: #9ece6a;
-        }
-        
-        .error-message {
-            color: #f7768e;
-            margin-left: 0;
-        }
-        
         .help-message {
-            color: #e0af68;
+            color: #c18401;
             margin-left: 0;
             font-size: 0.9em;
             white-space: pre-line;
@@ -986,6 +708,333 @@
             font-size: 12px;
             cursor: pointer;
         }
+        
+        .publication-venue {
+            color: #c18401;
+            font-size: 0.9em;
+        }
+        
+        .publication-links {
+            margin-top: 4px;
+            display: flex;
+            gap: 12px;
+            font-size: 0.85em;
+        }
+        
+        .publication-link {
+            color: #a626a4;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: linear-gradient(135deg, rgba(166, 38, 164, 0.05), rgba(166, 38, 164, 0.02));
+            backdrop-filter: blur(10px);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .publication-link:hover {
+            color: #823085;
+            border-color: #a626a4;
+            background: linear-gradient(135deg, rgba(166, 38, 164, 0.15), rgba(166, 38, 164, 0.08));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(166, 38, 164, 0.3);
+        }
+        
+        .publication-link.paper-link {
+            border-color: #0184bc;
+            color: #0184bc;
+            background: linear-gradient(135deg, rgba(1, 132, 188, 0.08), rgba(1, 132, 188, 0.03));
+        }
+        
+        .publication-link.paper-link:hover {
+            border-color: #014f7b;
+            color: #014f7b;
+            background: linear-gradient(135deg, rgba(1, 132, 188, 0.2), rgba(1, 132, 188, 0.1));
+            box-shadow: 0 4px 12px rgba(1, 132, 188, 0.3);
+        }
+        
+        .publication-link.bib-link {
+            border-color: #50a14f;
+            color: #50a14f;
+            background: linear-gradient(135deg, rgba(80, 161, 79, 0.08), rgba(80, 161, 79, 0.03));
+        }
+        
+        .publication-link.bib-link:hover {
+            border-color: #3d7c47;
+            color: #3d7c47;
+            background: linear-gradient(135deg, rgba(80, 161, 79, 0.2), rgba(80, 161, 79, 0.1));
+            box-shadow: 0 4px 12px rgba(80, 161, 79, 0.3);
+        }
+        
+        .link-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .paper-icon {
+            background: currentColor;
+            border-radius: 2px;
+            position: relative;
+            opacity: 0.9;
+        }
+        
+        .paper-icon::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: -2px;
+            bottom: -2px;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 0.6;
+            z-index: -1;
+        }
+        
+        .paper-icon::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: var(--terminal-bg);
+            box-shadow: 0 3px 0 var(--terminal-bg), 0 6px 0 var(--terminal-bg);
+        }
+        
+        .bib-icon {
+            background: currentColor;
+            border-radius: 2px;
+            position: relative;
+            opacity: 0.9;
+        }
+        
+        .bib-icon::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            right: 15%;
+            bottom: 15%;
+            background: var(--terminal-bg);
+            border-radius: 1px;
+        }
+        
+        .bib-icon::after {
+            content: '';
+            position: absolute;
+            top: 30%;
+            left: 25%;
+            right: 25%;
+            height: 1px;
+            background: currentColor;
+            box-shadow: 
+                0 2px 0 currentColor,
+                0 4px 0 currentColor,
+                0 7px 0 currentColor,
+                0 9px 0 currentColor;
+        }
+        
+        .scholar-icon {
+            background: currentColor;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .scholar-icon::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            right: 20%;
+            bottom: 20%;
+            background: var(--terminal-bg);
+            border-radius: 50%;
+        }
+        
+        .scholar-icon::after {
+            content: '';
+            position: absolute;
+            top: 35%;
+            left: 35%;
+            right: 35%;
+            bottom: 35%;
+            background: currentColor;
+            border-radius: 50%;
+        }
+        
+        .bib-citation {
+            position: relative;
+        }
+        
+        .bib-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--text-color);
+            white-space: pre-line;
+            z-index: 1000;
+            min-width: 400px;
+            max-width: 500px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+            pointer-events: none;
+        }
+        
+        .bib-tooltip.position-top {
+            bottom: 100%;
+            top: auto;
+            margin-bottom: 8px;
+            margin-top: 0;
+        }
+        
+        .bib-tooltip.position-bottom {
+            bottom: auto;
+            top: 100%;
+            margin-bottom: 0;
+            margin-top: 8px;
+        }
+        
+        .bib-tooltip.position-left {
+            left: 0;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip.position-right {
+            left: auto;
+            right: 0;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+        }
+        
+        .bib-tooltip.position-top::after {
+            top: 100%;
+            border-top-color: var(--border-color);
+            border-bottom: none;
+        }
+        
+        .bib-tooltip.position-bottom::after {
+            bottom: 100%;
+            border-bottom-color: var(--border-color);
+            border-top: none;
+        }
+        
+        .bib-tooltip.position-left::after {
+            left: 20px;
+            transform: translateX(0);
+        }
+        
+        .bib-tooltip.position-right::after {
+            left: auto;
+            right: 20px;
+            transform: translateX(0);
+        }
+        
+        .bib-citation:hover .bib-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .education .item-title {
+            color: #0184bc;
+        }
+        
+        .education .item-subtitle {
+            color: #e45649;
+        }
+        
+        .loading {
+            color: #a0a1a7;
+            font-style: italic;
+        }
+        
+        /* Interactive terminal styles */
+        .interactive-prompt {
+            margin-bottom: 8px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .command-input {
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--command-color);
+            font-family: 'Maple Mono', 'JetBrains Mono', 'Fira Code', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            font-size: 14px;
+            width: 100%;
+            caret-color: transparent;
+            position: relative;
+        }
+        
+        .custom-cursor {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background-color: var(--cursor-color);
+            pointer-events: none;
+            animation: blink 1s infinite;
+            z-index: 10;
+        }
+        
+        .file-list {
+            color: var(--prompt-color);
+            margin-left: 0;
+        }
+        
+        .file-item {
+            display: inline-block;
+            margin-right: 20px;
+            padding: 2px 4px;
+            color: #50a14f;
+        }
+        
+        .error-message {
+            color: #e45649;
+            margin-left: 0;
+        }
+        
+        /* Fallback for browsers that don't support background-clip: text */
+        @supports not (-webkit-background-clip: text) {
+            .highlighted-name {
+                color: #e45649;
+                background: linear-gradient(135deg, 
+                    rgba(228, 86, 73, 0.2), 
+                    rgba(193, 132, 1, 0.2)
+                );
+                -webkit-text-fill-color: unset;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1045,11 +1094,6 @@
 
     <div class="terminal-container">
         <div class="terminal-header">
-            <div class="window-controls">
-                <div class="control close"></div>
-                <div class="control minimize"></div>
-                <div class="control maximize"></div>
-            </div>
             <div class="terminal-title">Last Updated: 2025-06-03</div>
         </div>
         
@@ -1155,11 +1199,16 @@
 
         // Helper function to process welcome message with name highlighting
         function processWelcomeMessage(message) {
-            // Replace "Hainiu Xu" with highlighted version
-            return message.replace(
+            // Replace "Hainiu Xu" with highlighted version and add profile photo
+            const processedMessage = message.replace(
                 /Hainiu Xu/g, 
                 '<span class="welcome-name">Hainiu Xu (许海牛)</span>'
             );
+            
+            return `
+                <img src="assets/photo.jpg" alt="Hainiu Xu" class="profile-photo">
+                <div class="welcome-content">${processedMessage}</div>
+            `;
         }
 
         // Helper function to highlight author name in publications
@@ -1768,6 +1817,9 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                 this.commandHistory.push(command);
                 this.historyIndex = -1;
                 
+                // Store the original command for execution
+                const originalCommand = command;
+                
                 // Create a new prompt line showing the executed command
                 const currentPrompt = document.getElementById('current-prompt');
                 const newPromptLine = document.createElement('div');
@@ -1778,13 +1830,17 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                         <span class="directory">~/personal</span>
                         <span class="git-branch"> main</span>
                     </div>
-                    <div class="command">${command}</div>
+                    <div class="command"></div>
                 `;
+                
+                // Apply syntax highlighting to the command element
+                const commandElement = newPromptLine.querySelector('.command');
+                applySyntaxHighlighting(commandElement, originalCommand);
                 
                 currentPrompt.parentNode.insertBefore(newPromptLine, currentPrompt);
                 
-                // Execute command and show output
-                const result = this.commandHandler.executeCommand(command);
+                // Execute command using the original command (not highlighted)
+                const result = this.commandHandler.executeCommand(originalCommand);
                 
                 if (result === 'CLEAR_TERMINAL') {
                     this.clearTerminal();
@@ -1844,14 +1900,14 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                 
                 this.isTyping = true;
                 const cmdElement = document.getElementById(`cmd-${index}`);
-                const command = DEMO_SECTIONS[index].command;
+                const originalCommand = DEMO_SECTIONS[index].command;
                 
                 const typingCursor = document.createElement('span');
                 typingCursor.className = 'typing-cursor';
                 cmdElement.appendChild(typingCursor);
                 
-                for (let i = 0; i < command.length; i++) {
-                    const char = command[i];
+                for (let i = 0; i < originalCommand.length; i++) {
+                    const char = originalCommand[i];
                     let speed = 40 + Math.random() * 40;
                     
                     if (char === ' ') speed += 50;
@@ -1863,6 +1919,10 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                 }
                 
                 typingCursor.remove();
+                
+                // Apply syntax highlighting after typing is complete using DOM manipulation
+                applySyntaxHighlighting(cmdElement, originalCommand);
+                
                 await this.wait(200);
                 this.showOutput(index);
             }
@@ -2176,6 +2236,82 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
         
         // Initialize stats tracker
         window.statsTracker = new StatsTracker();
+
+        // Helper function to apply bash syntax highlighting using DOM manipulation
+        function applySyntaxHighlighting(element, command) {
+            // Clear the element
+            element.innerHTML = '';
+            
+            // Split command into tokens for highlighting
+            const tokens = [];
+            let currentToken = '';
+            let inQuotes = false;
+            let quoteChar = '';
+            
+            for (let i = 0; i < command.length; i++) {
+                const char = command[i];
+                
+                if (!inQuotes && (char === '"' || char === "'")) {
+                    if (currentToken) {
+                        tokens.push({type: 'normal', text: currentToken});
+                        currentToken = '';
+                    }
+                    inQuotes = true;
+                    quoteChar = char;
+                    currentToken = char;
+                } else if (inQuotes && char === quoteChar) {
+                    currentToken += char;
+                    tokens.push({type: 'string', text: currentToken});
+                    currentToken = '';
+                    inQuotes = false;
+                    quoteChar = '';
+                } else if (!inQuotes && char === ' ') {
+                    if (currentToken) {
+                        tokens.push({type: 'normal', text: currentToken});
+                        currentToken = '';
+                    }
+                    tokens.push({type: 'space', text: char});
+                } else {
+                    currentToken += char;
+                }
+            }
+            
+            if (currentToken) {
+                tokens.push({type: inQuotes ? 'string' : 'normal', text: currentToken});
+            }
+            
+            // Apply highlighting to tokens
+            tokens.forEach((token, index) => {
+                const span = document.createElement('span');
+                span.textContent = token.text;
+                
+                if (token.type === 'space') {
+                    element.appendChild(document.createTextNode(token.text));
+                    return;
+                }
+                
+                if (token.type === 'string') {
+                    span.className = 'bash-string';
+                } else if (token.text.startsWith('$') && token.text.match(/^\$[A-Z_][A-Z0-9_]*$/)) {
+                    span.className = 'bash-variable';
+                } else if (token.text.startsWith('-')) {
+                    span.className = 'bash-flag';
+                } else if (token.text.match(/^\d+$/)) {
+                    span.className = 'bash-number';
+                } else if (token.text.match(/\.(txt|pdf|js|html|css|json|toml|md|py|sh)$/)) {
+                    span.className = 'bash-argument';
+                } else if (index === 0) {
+                    span.className = 'bash-command';
+                }
+                
+                element.appendChild(span);
+            });
+        }
+        
+        // Helper function for backward compatibility
+        function highlightBashCommand(command) {
+            return command; // Just return the original command for innerHTML usage
+        }
     </script>
 </body>
 </html>
