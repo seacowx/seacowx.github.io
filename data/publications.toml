@@ -1,20 +1,5 @@
 [[publication]]
 title = "EnigmaToM: Improve LLMs' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States"
-authors = "Bohao Yang*, Hainiu Xu*, Jinhua Du, Ze Li, Yulan He, Chenghua Lin"
-venue = "In submission"
-year = "2025"
-paper_url = "https://arxiv.org/abs/2506.13641"
-bib = """
-@article{yang2025evolvtrip,
-  title={EvolvTrip: Enhancing Literary Character Understanding with Temporal Theory-of-Mind Graphs},
-  author={Yang, Bohao and Xu, Hainiu and Du, Jinhua and Li, Ze and He, Yulan and Lin, Chenghua},
-  journal={arXiv preprint arXiv:2506.13641},
-  year={2025}
-}
-"""
-
-[[publication]]
-title = "EnigmaToM: Improve LLMs' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States"
 authors = "Hainiu Xu, Siya Qi, Jiazheng Li, Yuxiang Zhou, Jinhua Du, Caroline Catmur, Yulan He"
 venue = "Findings of ACL 2025"
 year = "2025"
@@ -24,6 +9,21 @@ bib = """
   title={EnigmaToM: Improve LLMs' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States},
   author={Xu, Hainiu and He, Yulan and Catmur, Caroline and Du, Jinhua},
   booktitle={Findings of the Association for Computational Linguistics: ACL 2025},
+  year={2025}
+}
+"""
+
+[[publication]]
+title = "EvolvTrip: Enhancing Literary Character Understanding with Temporal Theory-of-Mind Graphs"
+authors = "Bohao Yang*, Hainiu Xu*, Jinhua Du, Ze Li, Yulan He, Chenghua Lin"
+venue = "In submission"
+year = "2025"
+paper_url = "https://arxiv.org/abs/2506.13641"
+bib = """
+@article{yang2025evolvtrip,
+  title={EvolvTrip: Enhancing Literary Character Understanding with Temporal Theory-of-Mind Graphs},
+  author={Yang, Bohao and Xu, Hainiu and Du, Jinhua and Li, Ze and He, Yulan and Lin, Chenghua},
+  journal={arXiv preprint arXiv:2506.13641},
   year={2025}
 }
 """
