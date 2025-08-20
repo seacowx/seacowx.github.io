@@ -31,14 +31,14 @@ bib = """
 [[publication]]
 title = "Modeling Subjectivity in Cognitive Appraisal with Language Models"
 authors = "Yuxiang Zhou*, Hainiu Xu*, Desmond C. Ong, Petr Slovak, Yulan He"
-venue = "In submission"
+venue = "Findings of EMNLP 2025"
 year = "2025"
 paper_url = "https://arxiv.org/abs/2503.11381"
 bib = """
-@article{zhou2025modeling,
+@inproceedings{zhou2025modeling,
   title={Modeling Subjectivity in Cognitive Appraisal with Language Models},
   author={Zhou, Yuxiang and Xu, Hainiu and Ong, Desmond C and Slovak, Petr and He, Yulan},
-  journal={arXiv preprint arXiv:2503.11381},
+  booktitle={Findings of the Association for Computational Linguistics: EMNLP 2025},
   year={2025}
 }
 """
