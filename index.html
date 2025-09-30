@@ -1473,34 +1473,41 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                 `;
             }
             
-            renderPublications(publications) {
-                return publications.map((pub, index) => {
-                    const titleWithLink = pub.paper_url ? 
-                        `<a href="${pub.paper_url}" target="_blank">${pub.title}</a>` : 
-                        pub.title;
-                    
-                    const bibTooltip = pub.bib ? 
-                        `<div class="bib-tooltip" id="bib-tooltip-cmd-${index}">${pub.bib}</div>` : '';
-                    
-                    return `
-                        <div class="item publication">
-                            <div class="item-title">${titleWithLink}</div>
-                            ${pub.authors ? `<div class="publication-authors">${highlightAuthorName(pub.authors)}</div>` : ''}
-                            <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
-                            <div class="publication-links">
-                                ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
-                                    <span class="link-icon paper-icon"></span>
-                                    Paper
-                                </a>` : ''}
-                                ${pub.bib ? `<span class="publication-link bib-citation bib-link" id="bib-trigger-cmd-${index}">
-                                    <span class="link-icon bib-icon"></span>
-                                    BibTeX${bibTooltip}
-                                </span>` : ''}
+                renderPublications(publications) {
+                    return publications.map((pub, index) => {
+                        const titleWithLink = pub.paper_url ? 
+                            `<a href="${pub.paper_url}" target="_blank">${pub.title}</a>` : 
+                            pub.title;
+                        
+                        const bibTooltip = pub.bib ? 
+                            `<div class="bib-tooltip" id="bib-tooltip-cmd-${index}">${pub.bib}</div>` : '';
+                        
+                        const pagePathLink = pub.page_path ?
+                            `<a href="${pub.page_path}" target="_blank" class="publication-link paper-link">
+                                <span class="link-icon paper-icon"></span>
+                                Website
+                            </a>` : '';
+
+                        return `
+                            <div class="item publication">
+                                <div class="item-title">${titleWithLink}</div>
+                                ${pub.authors ? `<div class="publication-authors">${highlightAuthorName(pub.authors)}</div>` : ''}
+                                <div class="publication-venue">${pub.venue} | <span class="item-meta">${pub.year}</span></div>
+                                <div class="publication-links">
+                                    ${pub.paper_url ? `<a href="${pub.paper_url}" target="_blank" class="publication-link paper-link">
+                                        <span class="link-icon paper-icon"></span>
+                                        Paper
+                                    </a>` : ''}
+                                    ${pub.bib ? `<span class="publication-link bib-citation bib-link" id="bib-trigger-cmd-${index}">
+                                        <span class="link-icon bib-icon"></span>
+                                        BibTeX${bibTooltip}
+                                    </span>` : ''}
+                                    ${pagePathLink}
+                                </div>
                             </div>
-                        </div>
-                    `;
-                }).join('');
-            }
+                        `;
+                    }).join('');
+                }
             
             renderExperiences() {
                 const experiences = this.data.experiences?.experience || [];
@@ -1573,6 +1580,12 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                         const bibTooltip = pub.bib ? 
                             `<div class="bib-tooltip" id="bib-tooltip-${index}">${pub.bib}</div>` : '';
                         
+                        const pagePathLink = pub.page_path ?
+                            `<a href="${pub.page_path}" target="_blank" class="publication-link paper-link">
+                                <span class="link-icon paper-icon"></span>
+                                Website
+                            </a>` : '';
+
                         return `
                             <div class="item publication">
                                 <div class="item-title">${titleWithLink}</div>
@@ -1587,6 +1600,7 @@ Available variables: $EXPERIENCES, $EDUCATION</div>`;
                                         <span class="link-icon bib-icon"></span>
                                         BibTeX${bibTooltip}
                                     </span>` : ''}
+                                    ${pagePathLink}
                                 </div>
                             </div>
                         `;
