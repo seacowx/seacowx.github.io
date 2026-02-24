@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
+import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import portrait from '@/assets/seacow.JPG'
 import { SOCIAL_LINKS } from './data'
@@ -52,12 +53,15 @@ export function Header({ activeSection, onSectionChange }: HeaderProps) {
           src={portrait}
           alt="Portrait of Hainiu Xu"
           priority
-          className="h-48 w-48 rounded-full object-cover"
+          className="h-36 w-36 rounded-full object-cover sm:h-48 sm:w-48"
         />
-        <Link href="/" className="text-4xl font-bold text-black dark:text-white">
+        <Link
+          href="/"
+          className="text-2xl font-bold text-black sm:text-4xl dark:text-white"
+        >
           Hainiu Xu (许海牛)
         </Link>
-        <p className="text-zinc-600 dark:text-zinc-500">
+        <p className="min-h-6 px-2 text-sm text-zinc-600 sm:text-base dark:text-zinc-500">
           {researchLines[lineIndex].slice(0, charIndex)}
           <span className="ml-0.5 inline-block w-[1px] animate-pulse bg-zinc-400 align-middle dark:bg-zinc-500">
             &nbsp;
@@ -68,14 +72,14 @@ export function Header({ activeSection, onSectionChange }: HeaderProps) {
             <a
               key={link.label}
               href={link.link}
-              className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              className="rounded-full bg-zinc-100 px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
             >
               {link.label}
             </a>
           ))}
         </div>
         <nav
-          className="mt-2 inline-flex flex-wrap items-center gap-1 rounded-full bg-zinc-100/80 p-1 ring-1 ring-zinc-200/60 backdrop-blur dark:bg-zinc-900/80 dark:ring-zinc-800/70"
+          className="mt-2 grid w-full max-w-md grid-cols-2 gap-1 rounded-[1.1rem] bg-zinc-100/80 p-1 ring-1 ring-zinc-200/60 backdrop-blur sm:flex sm:w-auto sm:max-w-none sm:flex-wrap sm:items-center dark:bg-zinc-900/80 dark:ring-zinc-800/70"
           aria-label="Primary"
         >
           {navItems.map((item) => {
@@ -85,11 +89,15 @@ export function Header({ activeSection, onSectionChange }: HeaderProps) {
                 key={item.label}
                 type="button"
                 onClick={() => onSectionChange(item.id)}
-                className="relative inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                className="relative inline-flex min-h-11 items-center justify-center rounded-[0.9rem] px-4 py-2 text-sm font-medium text-zinc-500 transition-colors duration-300 ease-out hover:text-zinc-900 sm:min-h-10 dark:text-zinc-400 dark:hover:text-zinc-100"
                 aria-current={isActive ? 'page' : undefined}
               >
                 {isActive ? (
-                  <span className="absolute inset-0 rounded-full bg-white shadow-[0_6px_16px_rgba(0,0,0,0.12)] dark:bg-zinc-950"></span>
+                  <motion.span
+                    layoutId="active-nav-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    className="absolute inset-0 rounded-[0.9rem] bg-white shadow-[0_6px_16px_rgba(0,0,0,0.12)] dark:bg-zinc-950"
+                  ></motion.span>
                 ) : null}
                 <span className="relative z-10">{item.label}</span>
               </button>
