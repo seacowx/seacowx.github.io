@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import portrait from '@/assets/seacow.jpg'
+import portrait from '@/assets/seacow.JPG'
 import { SOCIAL_LINKS } from './data'
 
 type HeaderProps = {
