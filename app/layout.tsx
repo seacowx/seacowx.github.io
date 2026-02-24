@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     apple: '/manatee.gif',
   },
   title: {
-    default: 'Nim - Personal website template',
+    default: 'Seacow\'s Homepage',
     template: '%s | Nim'
   },
-  description:  'Nim is a free and open-source personal website template built with Next.js 15, React 19 and Motion-Primitives.',
+  description:  'Welcome to Seacow\'s personal homepage.',
 };
 
 const geist = Geist({
