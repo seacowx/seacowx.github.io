@@ -1,5 +1,5 @@
 'use client'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Spotlight } from '@/components/ui/spotlight'
@@ -27,7 +27,8 @@ const VARIANTS_CONTAINER = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.15,
+      duration: 0.35,
+      ease: 'easeOut',
     },
   },
 }
@@ -35,11 +36,15 @@ const VARIANTS_CONTAINER = {
 const VARIANTS_SECTION = {
   hidden: { opacity: 0, y: 20, filter: 'blur(8px)' },
   visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  exit: { opacity: 0, y: -12, filter: 'blur(6px)' },
 }
 
 const TRANSITION_SECTION = {
-  duration: 0.3,
+  duration: 0.45,
+  ease: [0.22, 1, 0.36, 1] as const,
 }
+
+type SectionId = 'home' | 'education' | 'work' | 'publications' | 'contact'
 
 type ProjectVideoProps = {
   src: string
@@ -102,7 +107,7 @@ function MagneticSocialLink({
     <Magnetic springOptions={{ bounce: 0 }} intensity={0.3}>
       <a
         href={link}
-        className="group relative inline-flex shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-2.5 py-1 text-sm text-black transition-colors duration-200 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+        className="group relative inline-flex min-h-10 shrink-0 items-center gap-[1px] rounded-full bg-zinc-100 px-3 py-1.5 text-sm text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-950 hover:text-zinc-50 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
       >
         {children}
         <svg
@@ -126,51 +131,47 @@ function MagneticSocialLink({
 }
 
 export default function Personal() {
-  const [activeSection, setActiveSection] = useState('home')
+  const [activeSection, setActiveSection] = useState<SectionId>('home')
 
-  return (
-    <motion.main
-      id="top"
-      className="space-y-24"
-      variants={VARIANTS_CONTAINER}
-      initial="hidden"
-      animate="visible"
-    >
-      <Header activeSection={activeSection} onSectionChange={setActiveSection} />
-      {activeSection === 'home' ? (
-        <motion.section
-          id="home"
-          variants={VARIANTS_SECTION}
-          transition={TRANSITION_SECTION}
-        >
-          <div className="flex-1">
-            <p className="text-zinc-600 dark:text-zinc-400">
-              你好! Welcome to my homepage 👋
-            </p>
-            <br></br>
-            <p className="text-zinc-600 dark:text-zinc-400">
-              I am currently a third-year PhD student at King's College London, affiliated with KCL NLP. I'm fortunate to be supervised by Professor Yulan He, Professor Caroline Catmur, and Dr. Jinhua Du. My research interest is the intersection of Large Language Models and Cognitive Science. My study is funded by EPSRC.
-            </p>
-            <br></br>
-            <p className="text-zinc-600 dark:text-zinc-400">
-              Before KCL, I was a Master's student at the University of Pennsylvania, where I was supervised by Professor Chris Callison-Burch. During my time at Penn, I worked closely with Li "Harry" Zhang, who is currently an assistant professor at Drexel University. Prior to that, I completed my undergraduate degree in Statistical Data Science at University of California, Davis, where I worked on Functional Principal Component Analysis and Curve Registration with Professor Jane-Ling Wang.
-            </p>
-          </div>
-        </motion.section>
-      ) : null}
+  const renderActiveSection = () => {
+    if (activeSection === 'home') {
+      return (
+        <div className="flex-1">
+          <p className="text-sm leading-7 text-zinc-600 sm:text-base dark:text-zinc-400">
+            你好! Welcome to my homepage 👋
+          </p>
+          <br></br>
+          <p className="text-sm leading-7 text-zinc-600 sm:text-base dark:text-zinc-400">
+            I am currently a third-year PhD student at King's College London,
+            affiliated with KCL NLP. I'm fortunate to be supervised by Professor
+            Yulan He, Professor Caroline Catmur, and Dr. Jinhua Du. My research
+            interest is the intersection of Large Language Models and Cognitive
+            Science. My study is funded by EPSRC.
+          </p>
+          <br></br>
+          <p className="text-sm leading-7 text-zinc-600 sm:text-base dark:text-zinc-400">
+            Before KCL, I was a Master's student at the University of
+            Pennsylvania, where I was supervised by Professor Chris
+            Callison-Burch. During my time at Penn, I worked closely with Li
+            "Harry" Zhang, who is currently an assistant professor at Drexel
+            University. Prior to that, I completed my undergraduate degree in
+            Statistical Data Science at University of California, Davis, where I
+            worked on Functional Principal Component Analysis and Curve
+            Registration with Professor Jane-Ling Wang.
+          </p>
+        </div>
+      )
+    }
 
-      {activeSection === 'education' ? (
-        <motion.section
-          id="education"
-          variants={VARIANTS_SECTION}
-          transition={TRANSITION_SECTION}
-        >
+    if (activeSection === 'education') {
+      return (
+        <>
           <h3 className="mb-5 text-lg font-medium">Education</h3>
           <div className="flex flex-col space-y-2">
             {[
               {
                 id: 'edu-1',
-                school: 'King\'s College London',
+                school: "King's College London",
                 major: 'Ph.D. in Computer Science',
                 gpa: 'N/A',
                 location: 'London, UK',
@@ -194,15 +195,15 @@ export default function Personal() {
               },
             ].map((edu) => (
               <div
-                className="relative overflow-hidden rounded-2xl bg-zinc-300/30 p-[1px] dark:bg-zinc-600/30"
+                className="relative overflow-hidden rounded-2xl bg-zinc-300/30 p-[1px] transition-all duration-300 hover:-translate-y-0.5 dark:bg-zinc-600/30"
                 key={edu.id}
               >
                 <Spotlight
                   className="from-zinc-900 via-zinc-800 to-zinc-700 blur-2xl dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-50"
                   size={64}
                 />
-                <div className="relative h-full w-full rounded-[15px] bg-white p-4 dark:bg-zinc-950">
-                  <div className="relative flex w-full flex-row justify-between">
+                <div className="relative h-full w-full rounded-[15px] bg-white p-3 sm:p-4 dark:bg-zinc-950">
+                  <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h4 className="font-normal dark:text-zinc-100">
                         {edu.school}
@@ -214,7 +215,7 @@ export default function Personal() {
                         {edu.gpa} · {edu.location}
                       </p>
                     </div>
-                    <p className="text-zinc-600 dark:text-zinc-400">
+                    <p className="text-sm leading-7 text-zinc-600 sm:text-base dark:text-zinc-400">
                       {edu.time}
                     </p>
                   </div>
@@ -222,49 +223,18 @@ export default function Personal() {
               </div>
             ))}
           </div>
-        </motion.section>
-      ) : null}
+        </>
+      )
+    }
 
-      {/* <motion.section
-        variants={VARIANTS_SECTION}
-        transition={TRANSITION_SECTION}
-      >
-        <h3 className="mb-5 text-lg font-medium">Selected Projects</h3>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {PROJECTS.map((project) => (
-            <div key={project.name} className="space-y-2">
-              <div className="relative rounded-2xl bg-zinc-50/40 p-1 ring-1 ring-zinc-200/50 ring-inset dark:bg-zinc-950/40 dark:ring-zinc-800/50">
-                <ProjectVideo src={project.video} />
-              </div>
-              <div className="px-1">
-                <a
-                  className="font-base group relative inline-block font-[450] text-zinc-900 dark:text-zinc-50"
-                  href={project.link}
-                  target="_blank"
-                >
-                  {project.name}
-                  <span className="absolute bottom-0.5 left-0 block h-[1px] w-full max-w-0 bg-zinc-900 dark:bg-zinc-50 transition-all duration-200 group-hover:max-w-full"></span>
-                </a>
-                <p className="text-base text-zinc-600 dark:text-zinc-400">
-                  {project.description}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.section> */}
-
-      {activeSection === 'work' ? (
-        <motion.section
-          id="work"
-          variants={VARIANTS_SECTION}
-          transition={TRANSITION_SECTION}
-        >
+    if (activeSection === 'work') {
+      return (
+        <>
           <h3 className="mb-5 text-lg font-medium">Work Experience</h3>
           <div className="flex flex-col space-y-2">
             {WORK_EXPERIENCE.map((job) => (
               <a
-                className="relative overflow-hidden rounded-2xl bg-zinc-300/30 p-[1px] dark:bg-zinc-600/30"
+                className="relative overflow-hidden rounded-2xl bg-zinc-300/30 p-[1px] transition-all duration-300 hover:-translate-y-0.5 dark:bg-zinc-600/30"
                 href={job.link}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -274,8 +244,8 @@ export default function Personal() {
                   className="from-zinc-900 via-zinc-800 to-zinc-700 blur-2xl dark:from-zinc-100 dark:via-zinc-200 dark:to-zinc-50"
                   size={64}
                 />
-                <div className="relative h-full w-full rounded-[15px] bg-white p-4 dark:bg-zinc-950">
-                  <div className="relative flex w-full flex-row justify-between">
+                <div className="relative h-full w-full rounded-[15px] bg-white p-3 sm:p-4 dark:bg-zinc-950">
+                  <div className="relative flex w-full flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <h4 className="font-normal dark:text-zinc-100">
                         {job.title}
@@ -284,7 +254,7 @@ export default function Personal() {
                         {job.company}
                       </p>
                     </div>
-                    <p className="text-zinc-600 dark:text-zinc-400">
+                    <p className="text-sm leading-7 text-zinc-600 sm:text-base dark:text-zinc-400">
                       {job.start} - {job.end}
                     </p>
                   </div>
@@ -292,15 +262,13 @@ export default function Personal() {
               </a>
             ))}
           </div>
-        </motion.section>
-      ) : null}
+        </>
+      )
+    }
 
-      {activeSection === 'publications' ? (
-        <motion.section
-          id="publications"
-          variants={VARIANTS_SECTION}
-          transition={TRANSITION_SECTION}
-        >
+    if (activeSection === 'publications') {
+      return (
+        <>
           <h3 className="mb-3 text-lg font-medium">Selected Publications</h3>
           <div className="flex flex-col space-y-0">
             <AnimatedBackground
@@ -315,7 +283,7 @@ export default function Personal() {
               {PUBLICATIONS.map((publication) => (
                 <div
                   key={publication.id}
-                  className="-mx-3 rounded-xl px-3 py-3"
+                  className="-mx-3 block rounded-xl px-3 py-3 transition-all duration-300 hover:-translate-y-0.5"
                   data-id={publication.id}
                 >
                   <div className="flex flex-col space-y-1">
@@ -333,31 +301,61 @@ export default function Personal() {
               ))}
             </AnimatedBackground>
           </div>
-        </motion.section>
-      ) : null}
+        </>
+      )
+    }
 
-      {activeSection === 'contact' ? (
-        <motion.section
-          id="contact"
-          variants={VARIANTS_SECTION}
-          transition={TRANSITION_SECTION}
-        >
-          <h3 className="mb-5 text-lg font-medium">Connect</h3>
-          <p className="mb-5 text-zinc-600 dark:text-zinc-400">
-            Feel free to contact me at{' '}
-            <a className="underline dark:text-zinc-300" href={`mailto:${EMAIL}`}>
-              {EMAIL}
-            </a>
-          </p>
-          <div className="flex items-center justify-start space-x-3">
-            {SOCIAL_LINKS.map((link) => (
-              <MagneticSocialLink key={link.label} link={link.link}>
-                {link.label}
-              </MagneticSocialLink>
-            ))}
-          </div>
-        </motion.section>
-      ) : null}
+    return (
+      <>
+        <h3 className="mb-5 text-lg font-medium">Connect</h3>
+        <p className="mb-5 text-zinc-600 dark:text-zinc-400">
+          Feel free to contact me at{' '}
+          <a className="underline dark:text-zinc-300" href={`mailto:${EMAIL}`}>
+            {EMAIL}
+          </a>
+        </p>
+        <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
+          {SOCIAL_LINKS.map((link) => (
+            <MagneticSocialLink key={link.label} link={link.link}>
+              {link.label}
+            </MagneticSocialLink>
+          ))}
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <motion.main
+      id="top"
+      className="space-y-10 sm:space-y-14"
+      variants={VARIANTS_CONTAINER}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="sticky top-0 z-20 bg-white/90 pt-2 pb-4 backdrop-blur-md dark:bg-zinc-950/90">
+        <Header
+          activeSection={activeSection}
+          onSectionChange={(section) => setActiveSection(section as SectionId)}
+        />
+      </div>
+
+      <div className="min-h-[22rem] sm:min-h-[26rem]">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.section
+            key={activeSection}
+            id={activeSection}
+            variants={VARIANTS_SECTION}
+            transition={TRANSITION_SECTION}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="will-change-transform"
+          >
+            {renderActiveSection()}
+          </motion.section>
+        </AnimatePresence>
+      </div>
     </motion.main>
   )
 }
