@@ -20,6 +20,7 @@ type Publication = {
   venue: string
   year: string
   authors: string
+  url?: string
   id: string
 }
 
@@ -73,6 +74,7 @@ export const PUBLICATIONS: Publication[] = [
     venue: 'ICLR',
     year: '2026',
     authors: 'Hanqi Yan*, Hainiu Xu*, Siya Qi, Shu Yang, Yulan He',
+    url: 'https://arxiv.org/abs/2509.00544',
     id: 'pub-1',
   },
   {
@@ -80,6 +82,7 @@ export const PUBLICATIONS: Publication[] = [
     venue: 'Findings of ACL',
     year: '2025',
     authors: 'Hainiu Xu, Siya Qi, Jiazheng Li, Yuxiang Zhou, Jinhua Du, Caroline Catmur, Yulan He',
+    url: 'https://arxiv.org/abs/2503.03340',
     id: 'pub-2',
   },
   {
@@ -87,6 +90,7 @@ export const PUBLICATIONS: Publication[] = [
     venue: 'Findings of EMNLP',
     year: '2025',
     authors: 'Yuxiang Zhou*, Hainiu Xu*, Desmond C Ong, Petr Slovak, Yulan He',
+    url: 'https://arxiv.org/abs/2503.11381',
     id: 'pub-3',
   },
   {
@@ -94,6 +98,7 @@ export const PUBLICATIONS: Publication[] = [
     venue: 'ACL',
     year: '2024',
     authors: 'Hainiu Xu, Runcong Zhao, Lixing Zhu, Jinhua Du, Yulan He',
+    url: 'https://arxiv.org/abs/2402.06044',
     id: 'pub-4',
   },
 ]
