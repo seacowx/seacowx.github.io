@@ -11,7 +11,6 @@ import {
   MorphingDialogClose,
   MorphingDialogContainer,
 } from '@/components/ui/morphing-dialog'
-import Link from 'next/link'
 import { AnimatedBackground } from '@/components/ui/animated-background'
 import {
   // PROJECTS,
@@ -281,9 +280,18 @@ export default function Personal() {
               }}
             >
               {PUBLICATIONS.map((publication) => (
-                <div
+                <a
                   key={publication.id}
-                  className="-mx-3 block rounded-xl px-3 py-3 transition-all duration-300 hover:-translate-y-0.5"
+                  href={
+                    publication.url && publication.url.trim().length > 0
+                      ? publication.url
+                      : `https://scholar.google.com/scholar?q=${encodeURIComponent(
+                          publication.title
+                        )}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="-mx-3 block cursor-pointer rounded-xl px-3 py-3 transition-all duration-300 hover:-translate-y-0.5"
                   data-id={publication.id}
                 >
                   <div className="flex flex-col space-y-1">
@@ -297,7 +305,7 @@ export default function Personal() {
                       {publication.venue} · {publication.year}
                     </p>
                   </div>
-                </div>
+                </a>
               ))}
             </AnimatedBackground>
           </div>
@@ -333,7 +341,7 @@ export default function Personal() {
       initial="hidden"
       animate="visible"
     >
-      <div className="sticky top-0 z-20 bg-white/90 pt-2 pb-4 backdrop-blur-md dark:bg-zinc-950/90">
+      <div className="pt-2 pb-4">
         <Header
           activeSection={activeSection}
           onSectionChange={(section) => setActiveSection(section as SectionId)}
