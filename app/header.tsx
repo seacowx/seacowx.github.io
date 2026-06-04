@@ -43,6 +43,7 @@ export function Header({ activeSection, onSectionChange }: HeaderProps) {
     { label: 'Education', id: 'education' },
     { label: 'Work', id: 'work' },
     { label: 'Publications', id: 'publications' },
+    { label: 'Projects', id: 'projects' },
     { label: 'Contact', id: 'contact' },
   ]
 
