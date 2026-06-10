@@ -70,12 +70,20 @@ export const WORK_EXPERIENCE: WorkExperience[] = [
 
 export const PUBLICATIONS: Publication[] = [
   {
+    title: 'PreAct-Bench: Benchmarking Predictive Monitoring in LLMs',
+    venue: 'Preprint',
+    year: '2026',
+    authors: 'Hainiu Xu*, Italo Luis da Silva*, Jiangnan Ye, Yuhao Wang, Wei Liu, Linyi Yang, Jonathan Richard Schwarz, Nicola Paoletti, Yulan He, Hanqi Yan',
+    url: 'https://arxiv.org/pdf/2606.09890',
+    id: 'pub-1',
+  },
+  {
     title: 'When Thinking Backfires: Mechanistic Insights Into Reasoning-Induced Misalignment',
     venue: 'ICLR',
     year: '2026',
     authors: 'Hanqi Yan*, Hainiu Xu*, Siya Qi, Shu Yang, Yulan He',
     url: 'https://arxiv.org/abs/2509.00544',
-    id: 'pub-1',
+    id: 'pub-2',
   },
   {
     title: 'EnigmaToM: Improve LLMs\' Theory-of-Mind Reasoning Capabilities with Neural Knowledge Base of Entity States',
@@ -83,7 +91,7 @@ export const PUBLICATIONS: Publication[] = [
     year: '2025',
     authors: 'Hainiu Xu, Siya Qi, Jiazheng Li, Yuxiang Zhou, Jinhua Du, Caroline Catmur, Yulan He',
     url: 'https://arxiv.org/abs/2503.03340',
-    id: 'pub-2',
+    id: 'pub-3',
   },
   {
     title: 'Modeling Subjectivity in Cognitive Appraisal with Language Models',
@@ -91,7 +99,7 @@ export const PUBLICATIONS: Publication[] = [
     year: '2025',
     authors: 'Yuxiang Zhou*, Hainiu Xu*, Desmond C Ong, Petr Slovak, Yulan He',
     url: 'https://arxiv.org/abs/2503.11381',
-    id: 'pub-3',
+    id: 'pub-4',
   },
   {
     title: 'OpenToM: A Comprehensive Benchmark for Evaluating Theory-of-Mind Reasoning Capabilities of Large Language Models',
@@ -99,7 +107,7 @@ export const PUBLICATIONS: Publication[] = [
     year: '2024',
     authors: 'Hainiu Xu, Runcong Zhao, Lixing Zhu, Jinhua Du, Yulan He',
     url: 'https://arxiv.org/abs/2402.06044',
-    id: 'pub-4',
+    id: 'pub-5',
   },
 ]
 
