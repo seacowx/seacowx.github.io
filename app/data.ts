@@ -51,12 +51,20 @@ type SocialLink = {
 
 export const WORK_EXPERIENCE: WorkExperience[] = [
   {
+    company: 'Amazon',
+    title: 'Research Scientist Intern',
+    start: '2026.6',
+    end: '2026.11',
+    link: 'https://www.amazon.science/',
+    id: 'work3',
+  },
+  {
     company: 'Huawei London Research Center',
     title: 'Research Intern',
     start: '2024.6',
     end: '2024.9',
     link: 'https://huaweiuk.teamtailor.com/',
-    id: 'work1',
+    id: 'work2',
   },
   {
     company: 'Schlumberger BGC',
@@ -64,7 +72,7 @@ export const WORK_EXPERIENCE: WorkExperience[] = [
     start: '2020.9',
     end: '2021.5',
     link: 'https://www.slb.com/about/who-we-are/our-global-presence/slb-china',
-    id: 'work2',
+    id: 'work1',
   },
 ]
 
