@@ -72,7 +72,7 @@ export function Footer() {
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <a href="https://github.com/ibelick/nim" target="_blank">
           <TextLoop className="text-xs text-zinc-500">
-            <span>Last Updated: June-04, 2026</span>
+            <span>Last Updated: August 31, 2026</span>
             <span>London, UK</span>
             <span>Adopted from the Nim Theme.</span>
           </TextLoop>
